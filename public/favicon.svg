@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- 小票背景 -->
+  <rect width="70" height="90" x="15" y="5" rx="2" fill="#fafafa" stroke="#000" stroke-width="2"/>
+  
+  <!-- 小票顶部锯齿边 -->
+  <path d="M15 5 L18 8 L21 5 L24 8 L27 5 L30 8 L33 5 L36 8 L39 5 L42 8 L45 5 L48 8 L51 5 L54 8 L57 5 L60 8 L63 5 L66 8 L69 5 L72 8 L75 5 L78 8 L81 5 L84 8 L85 5" 
+        fill="none" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+  
+  <!-- 标题 -->
+  <text x="50" y="22" font-family="monospace" font-size="7" font-weight="bold" fill="#000" text-anchor="middle">LIFE LOGGER</text>
+  
+  <!-- 分隔线 -->
+  <line x1="22" y1="28" x2="78" y2="28" stroke="#000" stroke-width="1.5"/>
+  
+  <!-- 小票内容线条 -->
+  <line x1="22" y1="36" x2="78" y2="36" stroke="#666" stroke-width="0.8" stroke-dasharray="2,1.5"/>
+  <line x1="22" y1="42" x2="65" y2="42" stroke="#666" stroke-width="0.8" stroke-dasharray="2,1.5"/>
+  <line x1="22" y1="48" x2="78" y2="48" stroke="#666" stroke-width="0.8" stroke-dasharray="2,1.5"/>
+  <line x1="22" y1="54" x2="58" y2="54" stroke="#666" stroke-width="0.8" stroke-dasharray="2,1.5"/>
+  <line x1="22" y1="60" x2="78" y2="60" stroke="#666" stroke-width="0.8" stroke-dasharray="2,1.5"/>
+  
+  <!-- 总计线 -->
+  <line x1="22" y1="68" x2="78" y2="68" stroke="#000" stroke-width="1.5"/>
+  <text x="28" y="75" font-family="monospace" font-size="6" font-weight="bold" fill="#000">TOTAL</text>
+  
+  <!-- 条形码 -->
+  <g transform="translate(30, 82)">
+    <rect x="0" y="0" width="1.5" height="8" fill="#000"/>
+    <rect x="3" y="0" width="2" height="8" fill="#000"/>
+    <rect x="6.5" y="0" width="1" height="8" fill="#000"/>
+    <rect x="9" y="0" width="2.5" height="8" fill="#000"/>
+    <rect x="13" y="0" width="1" height="8" fill="#000"/>
+    <rect x="15.5" y="0" width="2" height="8" fill="#000"/>
+    <rect x="19" y="0" width="1.5" height="8" fill="#000"/>
+    <rect x="22" y="0" width="1" height="8" fill="#000"/>
+    <rect x="24.5" y="0" width="2" height="8" fill="#000"/>
+    <rect x="28" y="0" width="1.5" height="8" fill="#000"/>
+    <rect x="31" y="0" width="1" height="8" fill="#000"/>
+    <rect x="33.5" y="0" width="2" height="8" fill="#000"/>
+    <rect x="37" y="0" width="1.5" height="8" fill="#000"/>
+    <rect x="40" y="0" width="1" height="8" fill="#000"/>
+  </g>
+  
+  <!-- 小票底部锯齿边 -->
+  <path d="M15 95 L18 92 L21 95 L24 92 L27 95 L30 92 L33 95 L36 92 L39 95 L42 92 L45 95 L48 92 L51 95 L54 92 L57 95 L60 92 L63 95 L66 92 L69 95 L72 92 L75 95 L78 92 L81 95 L84 92 L85 95" 
+        fill="none" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+</svg>

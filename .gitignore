@@ -1,0 +1,6 @@
+.claude
+.spec-workflow
+
+.vite
+dist
+node_modules
