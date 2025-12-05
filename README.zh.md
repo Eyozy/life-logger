@@ -53,6 +53,14 @@ npm run build
 npm run preview 
 ```
 
+## 🌐 部署到 Netlify
+
+你可以通过 fork 的方式，将 LIFE_LOGGER 作为静态站点部署到 Netlify：
+
+1. 在 GitHub 上点击 **Fork**，将仓库 fork 到你自己的账号下。
+2. 在 Netlify 后台点击 **Add new site → Import an existing project**，选择你 fork 的仓库。
+3. 点击 **Deploy site**，之后每次向 fork 仓库的主分支推送代码，Netlify 都会自动重新构建并部署。
+
 ## 🤝 贡献
 
 欢迎任何形式的贡献：Bug 反馈、文案修正、小功能优化，或新的小票创意。

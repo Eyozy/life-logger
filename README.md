@@ -50,6 +50,14 @@ npm run build   # build for production (outputs to dist/)
 npm run preview # preview the production build locally
 ```
 
+## 🌐 Deploying to Netlify
+
+You can host LIFE_LOGGER as a static site on Netlify using your own fork.
+
+1. On GitHub, click **Fork** to create your own copy of the repository.
+2. In Netlify, click **Add new site → Import an existing project** and select your forked repository.
+3. Click **Deploy site**. Netlify will build and deploy on every new push to the main branch of your fork.
+
 ## 🤝 Contributing
 
 All kinds of contributions are welcome: bug reports, copy tweaks, small improvements or brand-new receipt ideas.
