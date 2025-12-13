@@ -262,7 +262,7 @@ export default function SleepReceiptPage() {
       <nav className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-black text-white rounded-full px-1.5 py-1.5 shadow-2xl flex gap-1" role="tablist" aria-label={lang === 'zh' ? '视图切换' : 'View tabs'}>
         <button 
           onClick={() => setMobileTab('edit')} 
-          className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all min-h-[44px] ${mobileTab === 'edit' ? 'bg-white text-black' : 'text-gray-400 hover:text-white'}`}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${mobileTab === 'edit' ? 'bg-white text-black' : 'text-gray-400 hover:text-white'}`}
           role="tab"
           aria-selected={mobileTab === 'edit'}
           aria-controls="edit-panel"
@@ -271,7 +271,7 @@ export default function SleepReceiptPage() {
         </button>
         <button 
           onClick={() => setMobileTab('preview')} 
-          className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all min-h-[44px] ${mobileTab === 'preview' ? 'bg-white text-black' : 'text-gray-400 hover:text-white'}`}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${mobileTab === 'preview' ? 'bg-white text-black' : 'text-gray-400 hover:text-white'}`}
           role="tab"
           aria-selected={mobileTab === 'preview'}
           aria-controls="preview-panel"

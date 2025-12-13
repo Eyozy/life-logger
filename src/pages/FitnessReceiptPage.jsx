@@ -283,7 +283,7 @@ export default function FitnessReceiptPage() {
       <nav className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-black text-white rounded-full px-1.5 py-1.5 shadow-2xl flex gap-1" role="tablist" aria-label={lang === 'zh' ? '视图切换' : 'View tabs'}>
         <button 
           onClick={() => setMobileTab('edit')} 
-          className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all min-h-[44px] ${mobileTab === 'edit' ? 'bg-white text-black' : 'text-gray-400 hover:text-white'}`}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${mobileTab === 'edit' ? 'bg-white text-black' : 'text-gray-400 hover:text-white'}`}
           role="tab"
           aria-selected={mobileTab === 'edit'}
           aria-controls="edit-panel"
@@ -292,7 +292,7 @@ export default function FitnessReceiptPage() {
         </button>
         <button 
           onClick={() => setMobileTab('preview')} 
-          className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all min-h-[44px] ${mobileTab === 'preview' ? 'bg-white text-black' : 'text-gray-400 hover:text-white'}`}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${mobileTab === 'preview' ? 'bg-white text-black' : 'text-gray-400 hover:text-white'}`}
           role="tab"
           aria-selected={mobileTab === 'preview'}
           aria-controls="preview-panel"
@@ -413,7 +413,6 @@ const FitnessPreview = React.forwardRef(({ data, text }, ref) => {
 
         {/* Footer / Barcode */}
         <div className="mt-auto pt-4 flex flex-col items-center">
-           <div className="w-full border-t border-dashed border-gray-400 mb-3"></div>
            <div className="text-[10px] font-bold uppercase tracking-widest mb-2 text-center">{text.labelWorkoutTagline}</div>
            <div className="w-full h-12 overflow-hidden flex items-center justify-between">
               {[...Array(32)].map((_, i) => {

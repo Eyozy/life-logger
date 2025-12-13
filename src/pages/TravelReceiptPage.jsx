@@ -109,8 +109,7 @@ const TEXT = {
       RAINY: "Rainy",
       SNOWY: "Snowy",
       FOGGY: "Foggy"
-    },
-    labelMood: "Mood/Energy"
+    }
   }
 };
 
@@ -454,7 +453,6 @@ const TravelPreview = React.forwardRef(({ data, text }, ref) => {
 
         {/* Footer / Barcode */}
         <div className="mt-auto pt-4 flex flex-col items-center">
-           <div className="w-full border-t border-dashed border-gray-400 mb-3"></div>
            <div className="text-[10px] font-bold uppercase tracking-widest mb-2 text-center">TICKET #8392-{new Date().getFullYear()}</div>
            <div className="w-full h-12 overflow-hidden flex items-center justify-between">
               {[...Array(32)].map((_, i) => {

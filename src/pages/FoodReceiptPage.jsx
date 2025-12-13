@@ -235,7 +235,7 @@ export default function FoodReceiptPage() {
       </div>
 
       {/* Right: Preview */}
-      <div className={`w-full md:w-1/2 bg-gray-200 flex flex-col items-center justify-center p-4 relative z-0 transition-transform duration-300 ${mobileTab === 'preview' ? 'translate-x-0' : 'translate-x-full md:translate-x-0'} absolute md:relative`}>
+      <div className={`w-full md:w-1/2 bg-gray-200 relative z-0 transition-transform duration-300 ${mobileTab === 'preview' ? 'translate-x-0' : 'translate-x-full md:translate-x-0'} absolute md:relative h-full`}>
         <div className="absolute inset-0 pointer-events-none opacity-5 bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px]"></div>
         
         <div className="absolute top-4 right-4 z-20">
@@ -245,10 +245,12 @@ export default function FoodReceiptPage() {
           </button>
         </div>
 
-        <div className="w-full h-full overflow-y-auto flex items-start justify-center pt-20 pb-32 md:pt-10 md:pb-10 no-scrollbar">
-           <div className="receipt-wrapper origin-top scale-90 sm:scale-100 transition-transform duration-500">
+        <div className="w-full h-full overflow-y-auto no-scrollbar">
+          <div className="min-h-full flex items-center justify-center py-20 md:py-10">
+            <div className="receipt-wrapper origin-top scale-90 sm:scale-100 transition-transform duration-500">
               <FoodReceiptPreview data={data} text={t} ref={receiptRef} />
-           </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -359,8 +361,7 @@ const FoodReceiptPreview = React.forwardRef(({ data, text }, ref) => {
 
       {/* Footer */}
       <div className="mt-auto pt-6 flex flex-col items-center">
-         <div className="w-full border-t border-dashed border-gray-400 mb-2"></div>
-         <div className="text-center text-[10px] font-bold uppercase tracking-widest text-gray-600">
+         <div className="text-center text-[10px] font-bold uppercase tracking-widest text-gray-600 mb-2">
             {text.endTransaction}
          </div>
          {/* Barcode Strip */}
