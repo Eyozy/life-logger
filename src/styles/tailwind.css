@@ -2,21 +2,118 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 全局使用 Fusion Pixel 12px Proportional 字体 */
+/* Global pixel font configuration */
 @layer base {
+  @font-face {
+    font-family: 'Fusion Pixel 12px Proportional SC';
+    font-display: swap;
+  }
+
   * {
     font-family: 'Fusion Pixel 12px Proportional SC', monospace !important;
-    font-size: 12px;
     letter-spacing: 0.05em;
   }
-  
+
   body, html, #root {
     font-family: 'Fusion Pixel 12px Proportional SC', monospace !important;
-    font-size: 12px;
+    font-size: clamp(0.75rem, 1.5vw + 0.5rem, 0.875rem);
   }
-  
-  /* 所有文本元素 */
-  p, span, div, label, input, textarea, select, button, h1, h2, h3, h4, h5, h6 {
+
+  p, span, div, label {
     font-family: 'Fusion Pixel 12px Proportional SC', monospace !important;
+    font-size: clamp(0.75rem, 1.5vw + 0.5rem, 0.875rem);
+  }
+
+  input, textarea, select, button {
+    font-family: 'Fusion Pixel 12px Proportional SC', monospace !important;
+    font-size: clamp(0.75rem, 1.5vw + 0.5rem, 0.875rem);
+  }
+
+  h1 {
+    font-family: 'Fusion Pixel 12px Proportional SC', monospace !important;
+    font-size: clamp(1.25rem, 3vw + 1rem, 1.875rem);
+  }
+
+  h2 {
+    font-family: 'Fusion Pixel 12px Proportional SC', monospace !important;
+    font-size: clamp(1.125rem, 2.5vw + 0.75rem, 1.5rem);
+  }
+
+  h3 {
+    font-family: 'Fusion Pixel 12px Proportional SC', monospace !important;
+    font-size: clamp(0.875rem, 2vw + 0.5rem, 1.125rem);
+  }
+
+  h4, h5, h6 {
+    font-family: 'Fusion Pixel 12px Proportional SC', monospace !important;
+    font-size: clamp(0.75rem, 1.8vw + 0.5rem, 1rem);
+  }
+
+  textarea {
+    resize: none !important;
+  }
+}
+
+/* Receipt preview responsive font sizing */
+@layer components {
+  .receipt-wrapper p,
+  .receipt-wrapper span:not([class*="text-"]),
+  .receipt-wrapper div:not([class*="text-"]),
+  .receipt-wrapper label {
+    font-size: clamp(0.7rem, 1.8vw + 0.4rem, 0.875rem);
+  }
+
+  .receipt-wrapper h1 {
+    font-size: clamp(1.5rem, 4vw + 1rem, 2.25rem);
+  }
+
+  .receipt-wrapper h2 {
+    font-size: clamp(1.125rem, 3vw + 0.75rem, 1.75rem);
+  }
+
+  .receipt-wrapper h3 {
+    font-size: clamp(0.875rem, 2.5vw + 0.5rem, 1.25rem);
+  }
+
+  .receipt-wrapper .text-xs,
+  .receipt-wrapper [class*="text-xs"] {
+    font-size: clamp(0.625rem, 1.5vw + 0.25rem, 0.75rem);
+  }
+
+  .receipt-wrapper .text-sm,
+  .receipt-wrapper [class*="text-sm"] {
+    font-size: clamp(0.7rem, 1.8vw + 0.35rem, 0.875rem);
+  }
+
+  .receipt-wrapper .text-base {
+    font-size: clamp(0.875rem, 2vw + 0.5rem, 1rem);
+  }
+
+  .receipt-wrapper .text-lg,
+  .receipt-wrapper [class*="text-lg"] {
+    font-size: clamp(1rem, 2.5vw + 0.75rem, 1.375rem);
+  }
+
+  .receipt-wrapper .text-xl,
+  .receipt-wrapper [class*="text-xl"] {
+    font-size: clamp(1.125rem, 3vw + 0.875rem, 1.625rem);
+  }
+
+  .receipt-wrapper .text-2xl,
+  .receipt-wrapper [class*="text-2xl"] {
+    font-size: clamp(1.5rem, 3.5vw + 1rem, 2rem);
+  }
+
+  .receipt-wrapper .text-3xl {
+    font-size: clamp(1.75rem, 4vw + 1.25rem, 2.5rem);
+  }
+
+  .receipt-wrapper .text-4xl {
+    font-size: clamp(2rem, 4.5vw + 1.5rem, 3rem);
+  }
+
+  .receipt-wrapper .text-5xl,
+  .receipt-wrapper [class*="text-5xl"] {
+    font-size: clamp(2.5rem, 5vw + 1.75rem, 3.5rem);
   }
 }

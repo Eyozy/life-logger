@@ -1,74 +1,77 @@
-/**
- * 全局常量配置
- * 集中管理所有魔法数字和固定值，便于维护和修改
- */
+// Global constants configuration
 
-// ==================== 收据样式常量 ====================
-export const RECEIPT_WIDTH = 380; // 收据宽度（px）
-export const RECEIPT_SCALE_MOBILE = 0.9; // 移动端缩放比例
-export const RECEIPT_SCALE_DESKTOP = 1.0; // 桌面端缩放比例
+// ==================== Receipt Style ====================
+export const RECEIPT_WIDTH = 380;
+export const RECEIPT_SCALE_MOBILE = 0.9;
+export const RECEIPT_SCALE_DESKTOP = 1.0;
 
-// ==================== 条码配置 ====================
-export const BARCODE_BARS_COUNT = 32; // 条码数量
-export const BARCODE_WIDTH_RANGE = 3; // 条码宽度变化范围（0-2）
-export const BARCODE_MIN_WIDTH = 2; // 条码最小宽度（px）
-export const BARCODE_HEIGHT = 48; // 条码高度（px，对应 h-12）
+// ==================== Barcode Configuration ====================
+export const BARCODE_BARS_COUNT = 32;
+export const BARCODE_WIDTH_RANGE = 3;
+export const BARCODE_MIN_WIDTH = 2;
+export const BARCODE_HEIGHT = 48;
 
-// ==================== 表单配置 ====================
-export const INPUT_SECTION_MAX_HEIGHT = 800; // 折叠区块最大高度（px）
-export const TEXTAREA_MIN_HEIGHT = 96; // 多行文本最小高度（px，对应 6rem）
-export const TEXTAREA_MAX_HEIGHT = 300; // 多行文本最大高度（px）
+// ==================== Form Configuration ====================
+export const INPUT_SECTION_MAX_HEIGHT = 800;
+export const TEXTAREA_MIN_HEIGHT = 96;
+export const TEXTAREA_MAX_HEIGHT = 300;
 
-// ==================== 评分范围 ====================
-export const RATING_MIN = 0; // 最小评分
-export const RATING_MAX_PERCENT = 100; // 百分比最大值
-export const RATING_MAX_STAR = 5; // 星级最大值
-export const RATING_MAX_SCORE = 10; // 10 分制最大值
+// ==================== Rating Range ====================
+export const RATING_MIN = 0;
+export const RATING_MAX_PERCENT = 100;
+export const RATING_MAX_STAR = 5;
+export const RATING_MAX_SCORE = 10;
 
-// ==================== 图片导出配置 ====================
-export const EXPORT_IMAGE_QUALITY = 1.0; // 导出图片质量
-export const EXPORT_IMAGE_PIXEL_RATIO = 3; // 导出图片像素比
-export const EXPORT_IMAGE_DELAY = 100; // 导出前延迟（ms）
+// ==================== Image Export Configuration ====================
+export const getOptimalPixelRatio = () => {
+  if (typeof window === 'undefined') return 2;
 
-// ==================== CDN 链接 ====================
-export const HTML_TO_IMAGE_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js';
+  const isMobile = window.innerWidth < 768;
+  const isLowEnd = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
 
-// ==================== 时间格式 ====================
-export const TIME_FORMAT_24H = 'HH:MM'; // 24 小时制时间格式
-export const MINUTES_PER_HOUR = 60; // 每小时分钟数
-export const MINUTES_PER_DAY = 1440; // 每天分钟数
+  if (isMobile && isLowEnd) return 2;
+  if (isMobile) return 2;
+  return 2.5;
+};
 
-// ==================== 睡眠评分权重 ====================
+export const EXPORT_IMAGE_QUALITY = 0.92;
+export const EXPORT_IMAGE_PIXEL_RATIO = getOptimalPixelRatio();
+export const EXPORT_IMAGE_DELAY = 100;
+
+// ==================== Time Format ====================
+export const TIME_FORMAT_24H = 'HH:MM';
+export const MINUTES_PER_HOUR = 60;
+export const MINUTES_PER_DAY = 1440;
+
+// ==================== Sleep Score Weights ====================
 export const SLEEP_SCORE_WEIGHTS = {
-  quality: 0.4, // 睡眠质量权重 40%
-  deepSleep: 0.3, // 深度睡眠权重 30%
-  wakeFreshness: 0.3, // 起床精神度权重 30%
+  quality: 0.4,
+  deepSleep: 0.3,
+  wakeFreshness: 0.3,
 };
 
-// ==================== 睡眠评分等级 ====================
+// ==================== Sleep Score Thresholds ====================
 export const SLEEP_SCORE_THRESHOLDS = {
-  excellent: 80, // 优秀
-  good: 60, // 良好
-  fair: 40, // 一般
-  // poor: < 40 // 较差
+  excellent: 80,
+  good: 60,
+  fair: 40,
 };
 
-// ==================== 咖啡因摄入量分级（mg）====================
+// ==================== Caffeine Thresholds (mg) ====================
 export const CAFFEINE_THRESHOLDS = {
-  safe: 200, // 安全范围
-  moderate: 300, // 适量
-  high: 400, // 接近上限
-  // danger: > 400 // 超标
+  safe: 200,
+  moderate: 300,
+  high: 400,
 };
 
-// ==================== 响应式断点 ====================
+// ==================== Responsive Breakpoints ====================
 export const BREAKPOINTS = {
-  mobile: 768, // 移动端最大宽度
-  tablet: 1024, // 平板最大宽度
-  desktop: 1280, // 桌面最小宽度
+  mobile: 768,
+  tablet: 1024,
+  desktop: 1280,
 };
 
-// ==================== Z-Index 层级 ====================
+// ==================== Z-Index Layers ====================
 export const Z_INDEX = {
   editor: 10,
   preview: 0,
@@ -76,9 +79,9 @@ export const Z_INDEX = {
   downloadButton: 20,
 };
 
-// ==================== 动画时长 ====================
+// ==================== Animation Duration (ms) ====================
 export const ANIMATION_DURATION = {
-  fast: 150, // 快速动画（ms）
-  normal: 300, // 正常动画（ms）
-  slow: 500, // 慢速动画（ms）
+  fast: 150,
+  normal: 300,
+  slow: 500,
 };
