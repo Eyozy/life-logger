@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useId } from "react";
 import { Link } from "react-router-dom";
 import {
   ChevronLeft,
@@ -12,7 +12,13 @@ import {
   Utensils,
   Eye,
 } from "lucide-react";
+import { LanguageContext } from "../AppRouter";
 import { useDownloadReceipt } from "../hooks/useDownloadReceipt";
+import {
+  InputSection,
+  InputGroup,
+  SliderItem,
+} from "../components/common/CommonComponents";
 
 // --- Lang Config ---
 const TEXT = {
@@ -80,98 +86,10 @@ const TEXT = {
   },
 };
 
-// --- UI Components ---
-const InputSection = ({ title, children, isOpen, onToggle }) => (
-  <div
-    className={`border border-gray-200 rounded-lg bg-white overflow-hidden transition-all duration-300 mb-3 ${
-      isOpen ? "shadow-md ring-1 ring-black/5" : "hover:border-gray-300"
-    }`}
-  >
-    <button
-      onClick={onToggle}
-      className="flex items-center justify-between w-full p-4 text-left transition-colors bg-white hover:bg-gray-50"
-    >
-      <h3
-        className={`text-sm font-bold uppercase tracking-wider ${
-          isOpen ? "text-black" : "text-gray-600"
-        }`}
-      >
-        {title}
-      </h3>
-      <div
-        className={`text-gray-400 transition-transform duration-300 ${
-          isOpen ? "rotate-180 text-black" : ""
-        }`}
-      >
-        <ChevronDown size={18} />
-      </div>
-    </button>
-    <div
-      className={`transition-all duration-300 ease-in-out ${
-        isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
-      }`}
-    >
-      <div className="p-4 pt-0 border-t border-gray-50">
-        <div className="pt-4 space-y-4">{children}</div>
-      </div>
-    </div>
-  </div>
-);
-
-const InputGroup = ({
-  label,
-  value,
-  onChange,
-  placeholder,
-  isTextArea = false,
-}) => (
-  <div>
-    <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">
-      {label}
-    </label>
-    {isTextArea ? (
-      <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full bg-gray-50 border border-gray-200 p-2.5 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none rounded-sm resize-none h-20 block transition-all"
-      />
-    ) : (
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full bg-gray-50 border border-gray-200 p-2.5 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none rounded-sm block transition-all"
-      />
-    )}
-  </div>
-);
-
-const SliderItem = ({ label, value, onChange }) => (
-  <div className="flex items-center gap-3">
-    <span className="w-24 text-[10px] font-bold uppercase text-gray-500 truncate">
-      {label}
-    </span>
-    <input
-      type="range"
-      min="0"
-      max="100"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      style={{
-        background: `linear-gradient(to right, black ${value}%, #e5e7eb ${value}%)`,
-      }}
-      className="flex-1 h-1 rounded-lg appearance-none cursor-pointer accent-black"
-    />
-    <span className="w-8 font-mono text-xs font-bold text-right text-gray-900">
-      {value}
-    </span>
-  </div>
-);
+// FoodReceiptPage
 
 export default function FoodReceiptPage() {
-  const [lang, setLang] = useState("zh");
+  const { lang, toggleLang } = React.useContext(LanguageContext);
   const [mobileTab, setMobileTab] = useState("edit");
   const [data, setData] = useState({
     restaurant: "楼下那家牛肉面",
@@ -189,12 +107,12 @@ export default function FoodReceiptPage() {
 
   const [expandedSection, setExpandedSection] = useState("context");
   const receiptRef = useRef(null);
-  const { isDownloading, handleDownload, error } = useDownloadReceipt('FOOD_LOG');
+  const { isDownloading, handleDownload, error } =
+    useDownloadReceipt("FOOD_LOG");
 
   const t = TEXT[lang];
   const toggleSection = (section) =>
     setExpandedSection(expandedSection === section ? null : section);
-  const toggleLang = () => setLang((l) => (l === "zh" ? "en" : "zh"));
 
   const updateOrder = (i, f, v) => {
     const n = [...data.orders];
@@ -207,7 +125,7 @@ export default function FoodReceiptPage() {
     setData({ ...data, orders: data.orders.filter((_, idx) => idx !== i) });
 
   return (
-    <div className="fixed inset-0 flex flex-col overflow-hidden font-mono text-gray-900 bg-gray-100 md:flex-row md:justify-center">
+    <div className="fixed inset-0 flex flex-col overflow-hidden text-gray-900 bg-gray-100 md:flex-row md:justify-center">
       {/* Left: Editor */}
       <div
         className={`w-full md:w-[450px] md:h-full flex flex-col h-full bg-white z-10 transition-transform duration-300 ${
@@ -220,7 +138,8 @@ export default function FoodReceiptPage() {
           <div className="flex items-center gap-3">
             <Link
               to="/"
-              className="p-2 transition-colors rounded-full hover:bg-gray-100"
+              className="p-2 transition-colors rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+              aria-label={lang === "zh" ? "返回首页" : "Back to home"}
             >
               <ChevronLeft size={18} />
             </Link>
@@ -228,7 +147,7 @@ export default function FoodReceiptPage() {
               <h1 className="text-lg font-black tracking-wider text-gray-900 truncate">
                 {t.title}
               </h1>
-              <p className="overflow-hidden text-xs font-bold text-gray-400 whitespace-nowrap text-ellipsis">
+              <p className="overflow-hidden text-xs font-bold text-gray-600 whitespace-nowrap text-ellipsis">
                 {t.subtitle}
               </p>
             </div>
@@ -270,24 +189,29 @@ export default function FoodReceiptPage() {
                 <input
                   value={item.name}
                   onChange={(e) => updateOrder(i, "name", e.target.value)}
+                  aria-label={t.labelItem}
                   className="flex-1 p-2 text-sm border border-gray-200 rounded-sm outline-none bg-gray-50 focus:border-black"
                   placeholder={t.labelItem}
                 />
                 <input
                   value={item.price}
                   onChange={(e) => updateOrder(i, "price", e.target.value)}
+                  aria-label={t.labelPrice}
                   className="w-16 p-2 text-sm text-right border border-gray-200 rounded-sm outline-none bg-gray-50 focus:border-black"
                   placeholder={t.labelPrice}
                 />
                 <button
+                  type="button"
                   onClick={() => removeOrder(i)}
                   className="text-gray-300 hover:text-red-500"
+                  aria-label={lang === "zh" ? "删除菜品" : "Remove item"}
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={16} aria-hidden="true" />
                 </button>
               </div>
             ))}
             <button
+              type="button"
               onClick={addOrder}
               className="flex items-center gap-1 mt-2 text-xs font-bold text-emerald-600 hover:text-emerald-700"
             >
@@ -322,14 +246,22 @@ export default function FoodReceiptPage() {
                 />
               </div>
               <div className="flex items-center justify-between pt-2">
-                <span className="text-[10px] font-bold uppercase text-gray-500">
+                <span className="text-[10px] font-bold uppercase text-gray-700">
                   {t.labelRating}
                 </span>
-                <div className="flex gap-1">
+                <div
+                  className="flex gap-1"
+                  role="radiogroup"
+                  aria-label={t.labelRating}
+                >
                   {[1, 2, 3, 4, 5].map((s) => (
                     <button
                       key={s}
+                      type="button"
                       onClick={() => setData({ ...data, rating: s })}
+                      role="radio"
+                      aria-checked={s === data.rating}
+                      aria-label={`${t.labelRating} ${s}/5`}
                       className={
                         s <= data.rating ? "text-black" : "text-gray-300"
                       }
@@ -337,6 +269,7 @@ export default function FoodReceiptPage() {
                       <Star
                         size={16}
                         fill={s <= data.rating ? "currentColor" : "none"}
+                        aria-hidden="true"
                       />
                     </button>
                   ))}
@@ -424,11 +357,11 @@ export default function FoodReceiptPage() {
 }
 
 const FoodReceiptPreview = React.forwardRef(({ data, text }, ref) => {
-  // 价格是可选项，只要有名称就显示
+  // Price is optional; include rows with a name
   const validOrders = data.orders.filter(
     (item) => item.name && item.name.trim()
   );
-  // 计算总价时忽略空价格
+  // Ignore missing prices when calculating the total
   const total = validOrders
     .reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0)
     .toFixed(2);
@@ -436,7 +369,7 @@ const FoodReceiptPreview = React.forwardRef(({ data, text }, ref) => {
 
   return (
     <div ref={ref} className="w-[380px] relative">
-      <div className="min-h-[600px] bg-white p-6 pb-8 font-mono flex flex-col">
+      <div className="min-h-[600px] bg-white p-6 pb-8 font-receipt tracking-receipt flex flex-col">
         {/* Header */}
         <div className="mb-4 text-center">
           <h1

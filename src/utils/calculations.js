@@ -1,5 +1,5 @@
 /**
- * 计算相关工具函数
+ * Calculation helpers.
  */
 
 import { 
@@ -11,13 +11,13 @@ import {
 } from './constants';
 
 /**
- * 计算睡眠时长
- * 自动处理跨天情况
- * 
- * @param {string} bedtime - 入睡时间 (格式："HH:MM")
- * @param {string} wakeTime - 起床时间 (格式："HH:MM")
- * @returns {string} 睡眠时长 (格式："Xh Ym")
- * 
+ * Calculate sleep duration.
+ * Automatically handles crossing midnight.
+ *
+ * @param {string} bedtime - Bedtime time string ("HH:MM")
+ * @param {string} wakeTime - Wake time string ("HH:MM")
+ * @returns {string} Sleep duration ("Xh Ym")
+ *
  * @example
  * calculateSleepDuration("23:30", "07:15") // "7h 45m"
  * calculateSleepDuration("01:00", "09:00") // "8h 0m"
@@ -25,20 +25,20 @@ import {
 export const calculateSleepDuration = (bedtime, wakeTime) => {
   if (!bedtime || !wakeTime) return "0h 0m";
   
-  // 解析时间字符串
+  // Parse "HH:MM"
   const [bedHour, bedMinute] = bedtime.split(':').map(Number);
   const [wakeHour, wakeMinute] = wakeTime.split(':').map(Number);
   
-  // 转换为分钟数
+  // Convert to minutes
   let bedMinutes = bedHour * MINUTES_PER_HOUR + bedMinute;
   let wakeMinutes = wakeHour * MINUTES_PER_HOUR + wakeMinute;
   
-  // 处理跨天情况（起床时间早于入睡时间）
+  // Handle crossing midnight (wake time earlier than bedtime)
   if (wakeMinutes <= bedMinutes) {
     wakeMinutes += MINUTES_PER_DAY;
   }
   
-  // 计算时长
+  // Calculate duration
   const diffMinutes = wakeMinutes - bedMinutes;
   const hours = Math.floor(diffMinutes / MINUTES_PER_HOUR);
   const minutes = diffMinutes % MINUTES_PER_HOUR;
@@ -47,15 +47,15 @@ export const calculateSleepDuration = (bedtime, wakeTime) => {
 };
 
 /**
- * 计算睡眠综合评分
- * 基于睡眠质量、深度睡眠和起床精神度的加权平均
- * 
- * @param {Object} metrics - 睡眠指标对象
- * @param {number} metrics.quality - 睡眠质量 (0-100)
- * @param {number} metrics.deepSleep - 深度睡眠感 (0-100)
- * @param {number} metrics.wakeFreshness - 起床精神度 (0-100)
- * @returns {number} 综合评分 (0-100)
- * 
+ * Calculate an overall sleep score.
+ * Weighted average of quality, deep sleep, and wake freshness.
+ *
+ * @param {Object} metrics - Sleep metrics object
+ * @param {number} metrics.quality - Sleep quality (0-100)
+ * @param {number} metrics.deepSleep - Deep sleep (0-100)
+ * @param {number} metrics.wakeFreshness - Wake freshness (0-100)
+ * @returns {number} Overall score (0-100)
+ *
  * @example
  * calculateSleepScore({ quality: 80, deepSleep: 75, wakeFreshness: 70 }) // 76
  */
@@ -71,14 +71,14 @@ export const calculateSleepScore = (metrics) => {
 };
 
 /**
- * 获取睡眠评分等级
- * 
- * @param {number} score - 睡眠评分 (0-100)
- * @param {Object} labels - 等级标签对象
- * @returns {string} 评分等级
- * 
+ * Get a sleep score label based on thresholds.
+ *
+ * @param {number} score - Sleep score (0-100)
+ * @param {Object} labels - Label map
+ * @returns {string} Label
+ *
  * @example
- * getSleepScoreLabel(85, { excellent: "优秀", good: "良好", fair: "一般", poor: "较差" }) // "优秀"
+ * getSleepScoreLabel(85, { excellent: "Excellent", good: "Good", fair: "Fair", poor: "Poor" }) // "Excellent"
  */
 export const getSleepScoreLabel = (score, labels) => {
   if (score >= SLEEP_SCORE_THRESHOLDS.excellent) return labels.excellent;
@@ -88,14 +88,14 @@ export const getSleepScoreLabel = (score, labels) => {
 };
 
 /**
- * 获取咖啡因摄入状态
- * 
- * @param {number} totalCaffeine - 总咖啡因摄入量 (mg)
- * @param {Object} statusLabels - 状态标签对象
+ * Get caffeine intake status.
+ *
+ * @param {number} totalCaffeine - Total caffeine intake (mg)
+ * @param {Object} statusLabels - Status label map
  * @returns {Object} { status: string, icon: string }
- * 
+ *
  * @example
- * getCaffeineStatus(280, {...}) // { status: "适量摄入", icon: "○" }
+ * getCaffeineStatus(280, {...}) // { status: "Moderate", icon: "○" }
  */
 export const getCaffeineStatus = (totalCaffeine, statusLabels) => {
   if (totalCaffeine < CAFFEINE_THRESHOLDS.safe) {
@@ -111,17 +111,17 @@ export const getCaffeineStatus = (totalCaffeine, statusLabels) => {
 };
 
 /**
- * 计算购物清单总额
- * 过滤掉无效价格并求和
- * 
- * @param {Array} items - 商品列表
+ * Calculate the total cost for a shopping list.
+ * Filters invalid prices and sums the rest.
+ *
+ * @param {Array} items - Item list
  * @returns {Object} { total: number, hasTotal: boolean }
- * 
+ *
  * @example
  * calculateShoppingTotal([
- *   { name: "外套", price: 599 },
- *   { name: "T恤", price: null },
- *   { name: "袜子", price: 79 }
+ *   { name: "Coat", price: 599 },
+ *   { name: "T-Shirt", price: null },
+ *   { name: "Socks", price: 79 }
  * ]) // { total: 678, hasTotal: true }
  */
 export const calculateShoppingTotal = (items) => {

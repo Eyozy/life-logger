@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useId } from "react";
 import { Link } from "react-router-dom";
 import {
   ChevronLeft,
@@ -107,7 +107,10 @@ const TEXT = {
   },
 };
 
-const InputSection = ({ title, children, isOpen, onToggle }) => (
+const InputSection = ({ title, children, isOpen, onToggle }) => {
+  const contentId = useId();
+
+  return (
   <div
     className={`border border-gray-200 rounded-lg bg-white overflow-hidden transition-all duration-300 mb-3 ${
       isOpen ? "shadow-md ring-1 ring-black/5" : "hover:border-gray-300"
@@ -116,14 +119,16 @@ const InputSection = ({ title, children, isOpen, onToggle }) => (
     <button
       onClick={onToggle}
       className="flex items-center justify-between w-full p-4 text-left transition-colors bg-white hover:bg-gray-50"
+      aria-expanded={isOpen}
+      aria-controls={contentId}
     >
-      <h3
+      <h2
         className={`text-sm font-bold uppercase tracking-wider ${
-          isOpen ? "text-black" : "text-gray-600"
+          isOpen ? "text-black" : "text-gray-700"
         }`}
       >
         {title}
-      </h3>
+      </h2>
       <div
         className={`text-gray-400 transition-transform duration-300 ${
           isOpen ? "rotate-180 text-black" : ""
@@ -133,6 +138,7 @@ const InputSection = ({ title, children, isOpen, onToggle }) => (
       </div>
     </button>
     <div
+      id={contentId}
       className={`transition-all duration-300 ease-in-out ${
         isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
       }`}
@@ -142,7 +148,8 @@ const InputSection = ({ title, children, isOpen, onToggle }) => (
       </div>
     </div>
   </div>
-);
+  );
+};
 
 const InputGroup = ({
   label,
@@ -151,6 +158,8 @@ const InputGroup = ({
   placeholder,
   isTextArea = false,
 }) => {
+  const inputId = useId();
+
   const handleTextareaChange = (e) => {
     // Update the value
     onChange(e.target.value);
@@ -163,11 +172,12 @@ const InputGroup = ({
 
   return (
     <div>
-      <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">
+      <label htmlFor={inputId} className="block text-[10px] font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
         {label}
       </label>
       {isTextArea ? (
         <textarea
+          id={inputId}
           value={value}
           onChange={handleTextareaChange}
           onInput={handleTextareaChange} // Also handle paste and other input events
@@ -177,6 +187,7 @@ const InputGroup = ({
         />
       ) : (
         <input
+          id={inputId}
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -190,7 +201,7 @@ const InputGroup = ({
 
 const SliderItem = ({ label, value, onChange, icon: Icon }) => (
   <div className="flex items-center gap-3">
-    <div className="flex items-center w-24 gap-2 text-gray-500">
+    <div className="flex items-center w-24 gap-2 text-gray-700">
       {Icon && <Icon size={14} />}
       <span className="text-[10px] font-bold uppercase truncate">{label}</span>
     </div>
@@ -200,6 +211,7 @@ const SliderItem = ({ label, value, onChange, icon: Icon }) => (
       max="100"
       value={value}
       onChange={(e) => onChange(parseInt(e.target.value))}
+      aria-label={label}
       className="flex-1 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
     />
     <span className="w-8 font-mono text-xs font-bold text-right text-gray-900">
@@ -233,7 +245,7 @@ export default function SocialReceiptPage() {
     setExpandedSection(expandedSection === s ? null : s);
 
   return (
-    <div className="fixed inset-0 flex flex-col overflow-hidden font-mono text-gray-900 bg-gray-100 md:flex-row md:justify-center">
+    <div className="fixed inset-0 flex flex-col overflow-hidden text-gray-900 bg-gray-100 md:flex-row md:justify-center">
       {/* Editor */}
       <div
         className={`w-full md:w-[450px] flex flex-col h-full bg-white  z-10 transition-transform duration-300 ${
@@ -246,7 +258,8 @@ export default function SocialReceiptPage() {
           <div className="flex items-center gap-3">
             <Link
               to="/"
-              className="p-2 transition-colors rounded-full hover:bg-gray-100"
+              className="p-2 transition-colors rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+              aria-label={lang === "zh" ? "返回首页" : "Back to home"}
             >
               <ChevronLeft size={18} />
             </Link>
@@ -254,7 +267,7 @@ export default function SocialReceiptPage() {
               <h1 className="text-lg font-black tracking-wider text-gray-900 truncate">
                 {t.title}
               </h1>
-              <p className="overflow-hidden text-xs font-bold text-gray-400 whitespace-nowrap text-ellipsis">
+              <p className="overflow-hidden text-xs font-bold text-gray-600 whitespace-nowrap text-ellipsis">
                 {t.subtitle}
               </p>
             </div>
@@ -281,12 +294,13 @@ export default function SocialReceiptPage() {
             />
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase">
+                <label className="block text-[10px] font-bold text-gray-700 mb-1.5 uppercase">
                   {t.labelType}
                 </label>
                 <select
                   value={data.type}
                   onChange={(e) => setData({ ...data, type: e.target.value })}
+                  aria-label={t.labelType}
                   className="w-full bg-gray-50 border border-gray-200 p-2.5 text-sm focus:border-black outline-none rounded-sm"
                 >
                   {Object.entries(t.types).map(([key, label]) => (
@@ -440,7 +454,7 @@ export default function SocialReceiptPage() {
 const SocialPreview = React.forwardRef(({ data, text }, ref) => {
   return (
     <div ref={ref} className="w-[380px] relative">
-      <div className="min-h-[600px] bg-white p-6 pb-8 font-mono flex flex-col">
+      <div className="min-h-[600px] bg-white p-6 pb-8 font-receipt tracking-receipt flex flex-col">
         {/* Header */}
         <div className="mb-4 text-center">
           <h1 className="mb-1 text-3xl font-bold tracking-wider text-black">
@@ -565,7 +579,7 @@ const SocialPreview = React.forwardRef(({ data, text }, ref) => {
               ></div>
             ))}
           </div>
-          <div className="text-[10px] mt-1 font-mono">
+          <div className="text-[10px] mt-1 font-receipt">
             {Date.now().toString().slice(-8)}
           </div>
         </div>

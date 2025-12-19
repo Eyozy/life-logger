@@ -4,53 +4,25 @@
 
 /* Global pixel font configuration */
 @layer base {
-  @font-face {
-    font-family: 'Fusion Pixel 12px Proportional SC';
-    font-display: swap;
-  }
-
-  * {
-    font-family: 'Fusion Pixel 12px Proportional SC', monospace !important;
-    letter-spacing: 0.05em;
-  }
-
-  body, html, #root {
-    font-family: 'Fusion Pixel 12px Proportional SC', monospace !important;
+  body,
+  html,
+  #root {
     font-size: clamp(0.75rem, 1.5vw + 0.5rem, 0.875rem);
-  }
-
-  p, span, div, label {
-    font-family: 'Fusion Pixel 12px Proportional SC', monospace !important;
-    font-size: clamp(0.75rem, 1.5vw + 0.5rem, 0.875rem);
-  }
-
-  input, textarea, select, button {
-    font-family: 'Fusion Pixel 12px Proportional SC', monospace !important;
-    font-size: clamp(0.75rem, 1.5vw + 0.5rem, 0.875rem);
-  }
-
-  h1 {
-    font-family: 'Fusion Pixel 12px Proportional SC', monospace !important;
-    font-size: clamp(1.25rem, 3vw + 1rem, 1.875rem);
-  }
-
-  h2 {
-    font-family: 'Fusion Pixel 12px Proportional SC', monospace !important;
-    font-size: clamp(1.125rem, 2.5vw + 0.75rem, 1.5rem);
-  }
-
-  h3 {
-    font-family: 'Fusion Pixel 12px Proportional SC', monospace !important;
-    font-size: clamp(0.875rem, 2vw + 0.5rem, 1.125rem);
-  }
-
-  h4, h5, h6 {
-    font-family: 'Fusion Pixel 12px Proportional SC', monospace !important;
-    font-size: clamp(0.75rem, 1.8vw + 0.5rem, 1rem);
   }
 
   textarea {
     resize: none !important;
+  }
+
+  /* Improve focus visibility (accessibility) */
+  *:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+  }
+
+  /* Hide focus outlines for non-keyboard focus */
+  *:focus:not(:focus-visible) {
+    outline: none;
   }
 }
 

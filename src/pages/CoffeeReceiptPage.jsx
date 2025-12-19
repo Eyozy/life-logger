@@ -161,28 +161,31 @@ export default function CoffeeReceiptPage() {
   const toggleSection = (s) =>
     setExpandedSection(expandedSection === s ? null : s);
 
-  // 使用自定义 Hook 处理下载
+  // Use custom hook for download/export
   const {
     isDownloading,
     handleDownload: download,
     error,
   } = useDownloadReceipt("CAFFEINE_LOG");
 
-  // 计算咖啡因状态（使用 useMemo 优化性能）
+  // Compute caffeine status (memoized)
   const caffeineStatusInfo = useMemo(
     () => getCaffeineStatus(data.todayTotal, t.caffeineStatus),
     [data.todayTotal, t.caffeineStatus]
   );
 
-  // 错误提示
+  // Error handling
   if (error) {
     alert(error);
   }
 
   return (
-    <div className="fixed inset-0 flex flex-col overflow-hidden font-receipt tracking-receipt text-gray-900 bg-gray-100 md:flex-row md:justify-center">
+    <div className="fixed inset-0 flex flex-col overflow-hidden text-gray-900 bg-gray-100 md:flex-row md:justify-center">
       {/* Editor */}
       <div
+        id="edit-panel"
+        role="tabpanel"
+        aria-labelledby="tab-edit"
         className={`w-full md:w-[450px] flex flex-col h-full bg-white z-10 transition-transform duration-300 ${
           mobileTab === "edit"
             ? "translate-x-0"
@@ -202,7 +205,7 @@ export default function CoffeeReceiptPage() {
               <h1 className="text-lg font-black tracking-wider text-gray-900 truncate">
                 {t.title}
               </h1>
-              <p className="overflow-hidden text-xs font-bold text-gray-400 whitespace-nowrap text-ellipsis">
+              <p className="overflow-hidden text-xs font-bold text-gray-600 whitespace-nowrap text-ellipsis">
                 {t.subtitle}
               </p>
             </div>
@@ -210,7 +213,6 @@ export default function CoffeeReceiptPage() {
           <button
             onClick={toggleLang}
             className="flex items-center gap-1 px-3 py-2 text-xs font-bold bg-gray-100 rounded hover:bg-gray-200 shrink-0 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-            aria-label={lang === "zh" ? "切换到英文" : "Switch to Chinese"}
           >
             <Globe size={12} aria-hidden="true" />{" "}
             {lang === "zh" ? "EN" : "中文"}
@@ -248,12 +250,13 @@ export default function CoffeeReceiptPage() {
             />
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase">
+                <label className="block text-[10px] font-bold text-gray-700 mb-1.5 uppercase">
                   {t.labelSize}
                 </label>
                 <select
                   value={data.size}
                   onChange={(e) => setData({ ...data, size: e.target.value })}
+                  aria-label={t.labelSize}
                   className="w-full bg-gray-50 border border-gray-200 p-2.5 text-sm focus:border-black outline-none rounded-sm"
                 >
                   {Object.entries(t.sizeOptions).map(([key, label]) => (
@@ -271,12 +274,13 @@ export default function CoffeeReceiptPage() {
               />
             </div>
             <div>
-              <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase">
+              <label className="block text-[10px] font-bold text-gray-700 mb-1.5 uppercase">
                 {t.labelMethod}
               </label>
               <select
                 value={data.method}
                 onChange={(e) => setData({ ...data, method: e.target.value })}
+                aria-label={t.labelMethod}
                 className="w-full bg-gray-50 border border-gray-200 p-2.5 text-sm focus:border-black outline-none rounded-sm"
               >
                 {Object.entries(t.methodOptions).map(([key, label]) => (
@@ -375,6 +379,9 @@ export default function CoffeeReceiptPage() {
 
       {/* Preview */}
       <div
+        id="preview-panel"
+        role="tabpanel"
+        aria-labelledby="tab-preview"
         className={`w-full md:w-[450px] bg-gray-200 relative z-0 transition-transform duration-300 ${
           mobileTab === "preview"
             ? "translate-x-0"
@@ -420,6 +427,7 @@ export default function CoffeeReceiptPage() {
               : "text-gray-400 hover:text-white"
           }`}
           role="tab"
+          id="tab-edit"
           aria-selected={mobileTab === "edit"}
           aria-controls="edit-panel"
         >
@@ -434,6 +442,7 @@ export default function CoffeeReceiptPage() {
               : "text-gray-400 hover:text-white"
           }`}
           role="tab"
+          id="tab-preview"
           aria-selected={mobileTab === "preview"}
           aria-controls="preview-panel"
         >
@@ -446,8 +455,8 @@ export default function CoffeeReceiptPage() {
 }
 
 /**
- * 咖啡收据预览组件
- * 展示咖啡信息、口味评价和咖啡因追踪
+ * Coffee receipt preview component.
+ * Shows coffee details, taste metrics, and caffeine tracking.
  */
 const CoffeePreview = React.forwardRef(({ data, text }, ref) => {
   const metricMap = {
@@ -457,7 +466,7 @@ const CoffeePreview = React.forwardRef(({ data, text }, ref) => {
     satisfaction: text.labelSatisfaction,
   };
 
-  // 计算咖啡因状态（使用 useMemo 优化性能）
+  // Compute caffeine status (memoized)
   const caffeineInfo = useMemo(
     () => getCaffeineStatus(data.todayTotal, text.caffeineStatus),
     [data.todayTotal, text.caffeineStatus]

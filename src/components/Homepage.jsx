@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Coffee, Ticket, Brain, BookOpen, User, ArrowRight, Sparkles, Globe, Heart, Headphones, Plane, Dumbbell, Users, Moon, ShoppingBag } from 'lucide-react';
+import { Coffee, Ticket, BookOpen, User, ArrowRight, Sparkles, Globe, Heart, Headphones, Plane, Dumbbell, Users, Moon, ShoppingBag } from 'lucide-react';
 import { LanguageContext } from '../AppRouter'; // Import LanguageContext
 
 const TEXT = {
@@ -111,7 +111,8 @@ const Homepage = () => {
   const { lang, toggleLang } = useContext(LanguageContext); // Use global lang state
   const t = TEXT[lang];
 
-  const apps = [
+  // Memoize the apps array to avoid recreating it on every render
+  const apps = useMemo(() => [
     {
       id: 'life',
       path: '/receipt/life',
@@ -229,10 +230,15 @@ const Homepage = () => {
       desc: t.shoppingDesc,
       color: 'hover:border-rose-600'
     }
-  ];
+  ], [t]); // Recompute when language changes
+
+  // Memoize event handlers to keep referential stability
+  const handleLanguageToggle = useCallback(() => {
+    toggleLang();
+  }, [toggleLang]);
 
   return (
-    <div className="min-h-screen bg-gray-50 font-mono text-gray-900">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       {/* Header */}
       <header className="border-b border-gray-200 bg-white p-6 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -240,13 +246,12 @@ const Homepage = () => {
             <h1 className="text-2xl font-black tracking-widest flex items-center gap-2">
               <Sparkles size={20} /> {t.title}
             </h1>
-            <p className="text-xs text-gray-400 font-bold mt-1">{t.subtitle}</p>
+            <p className="text-xs text-gray-600 font-bold mt-1">{t.subtitle}</p>
           </div>
           {/* Language Toggle for Homepage */}
-          <button 
-            onClick={toggleLang} 
+          <button
+            onClick={handleLanguageToggle}
             className="text-xs px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded font-bold flex items-center gap-1 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-            aria-label={lang === 'zh' ? '切换到英文' : 'Switch to Chinese'}
           >
             <Globe size={12} aria-hidden="true" /> {lang === 'zh' ? 'EN' : '中文'}
           </button>
@@ -256,22 +261,21 @@ const Homepage = () => {
       {/* Main Grid */}
       <main className="max-w-6xl mx-auto p-6 pb-20">
         <div className="mb-8">
-          <h2 className="text-sm font-bold uppercase text-gray-400 tracking-wider mb-4">{t.selectTerminal}</h2>
+          <h2 className="text-sm font-bold uppercase text-gray-600 tracking-wider mb-4">{t.selectTerminal}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {apps.map((app) => (
               <Link
                 key={app.id}
                 to={app.path}
-                className={`group block bg-white border-2 border-transparent rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 p-6 relative overflow-hidden ${app.color} focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2`}
-                aria-label={`${app.title} - ${app.desc}`}
+                className={`group block bg-white border-2 border-transparent rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 p-6 relative overflow-hidden ${app.color} focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2`}
               >
                 <div className="relative z-10">
                   <div className="mb-4 text-gray-800 group-hover:scale-110 transition-transform duration-300 origin-left">
                     {app.icon}
                   </div>
                   <h3 className="text-xl font-bold mb-1 group-hover:text-black transition-colors">{app.title}</h3>
-                  <div className="text-xs font-bold uppercase text-gray-400 mb-3 tracking-wide group-hover:text-gray-600">{app.subtitle}</div>
-                  <p className="text-sm text-gray-500 leading-relaxed mb-6 min-h-[40px]">
+                  <div className="text-xs font-bold uppercase text-gray-600 mb-3 tracking-wide group-hover:text-gray-700">{app.subtitle}</div>
+                  <p className="text-sm text-gray-600 leading-relaxed mb-6 min-h-[40px]">
                     {app.desc}
                   </p>
                   
@@ -291,20 +295,7 @@ const Homepage = () => {
         {/* Footer Info */}
         <footer className="text-center border-t border-gray-200 pt-8 mt-12 pb-6">
           <div className="flex flex-col items-center gap-4">
-            <a 
-              href="https://www.netlify.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-block transition-opacity hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 rounded"
-              aria-label="Deployed on Netlify"
-            >
-              <img 
-                src="https://www.netlify.com/v3/img/components/netlify-color-accent.svg" 
-                alt="Deploys by Netlify" 
-                className="h-10"
-              />
-            </a>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-600">
               &copy; {new Date().getFullYear()} LIFE_LOGGER. All rights reserved.
             </p>
           </div>
@@ -314,4 +305,5 @@ const Homepage = () => {
   );
 };
 
-export default Homepage;
+// Use React.memo to avoid unnecessary re-renders
+export default React.memo(Homepage);

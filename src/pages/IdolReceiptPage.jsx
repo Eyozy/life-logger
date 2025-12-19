@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useId } from "react";
 import { Link } from "react-router-dom";
 import {
   ChevronLeft,
@@ -112,7 +112,10 @@ const TEXT = {
 };
 
 // --- Shared Components ---
-const InputSection = ({ title, children, isOpen, onToggle }) => (
+const InputSection = ({ title, children, isOpen, onToggle }) => {
+  const contentId = useId();
+
+  return (
   <div
     className={`border border-gray-200 rounded-lg bg-white overflow-hidden transition-all duration-300 mb-3 ${
       isOpen ? "shadow-md ring-1 ring-black/5" : "hover:border-gray-300"
@@ -121,14 +124,16 @@ const InputSection = ({ title, children, isOpen, onToggle }) => (
     <button
       onClick={onToggle}
       className="flex items-center justify-between w-full p-4 text-left transition-colors bg-white hover:bg-gray-50"
+      aria-expanded={isOpen}
+      aria-controls={contentId}
     >
-      <h3
+      <h2
         className={`text-sm font-bold uppercase tracking-wider ${
-          isOpen ? "text-black" : "text-gray-600"
+          isOpen ? "text-black" : "text-gray-700"
         }`}
       >
         {title}
-      </h3>
+      </h2>
       <div
         className={`text-gray-400 transition-transform duration-300 ${
           isOpen ? "rotate-180 text-black" : ""
@@ -138,6 +143,7 @@ const InputSection = ({ title, children, isOpen, onToggle }) => (
       </div>
     </button>
     <div
+      id={contentId}
       className={`transition-all duration-300 ease-in-out ${
         isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
       }`}
@@ -147,7 +153,8 @@ const InputSection = ({ title, children, isOpen, onToggle }) => (
       </div>
     </div>
   </div>
-);
+  );
+};
 
 const InputGroup = ({
   label,
@@ -155,13 +162,17 @@ const InputGroup = ({
   onChange,
   placeholder,
   isTextArea = false,
-}) => (
+}) => {
+  const inputId = useId();
+
+  return (
   <div>
-    <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">
+    <label htmlFor={inputId} className="block text-[10px] font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
       {label}
     </label>
     {isTextArea ? (
       <textarea
+        id={inputId}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
@@ -169,6 +180,7 @@ const InputGroup = ({
       />
     ) : (
       <input
+        id={inputId}
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -177,11 +189,12 @@ const InputGroup = ({
       />
     )}
   </div>
-);
+  );
+};
 
 const SliderItem = ({ label, value, onChange, icon: Icon }) => (
   <div className="flex items-center gap-3">
-    <div className="flex items-center w-24 gap-2 text-gray-500">
+    <div className="flex items-center w-24 gap-2 text-gray-700">
       {Icon && <Icon size={14} />}
       <span className="text-[10px] font-bold uppercase truncate">{label}</span>
     </div>
@@ -191,6 +204,7 @@ const SliderItem = ({ label, value, onChange, icon: Icon }) => (
       max="100"
       value={value}
       onChange={(e) => onChange(parseInt(e.target.value))}
+      aria-label={label}
       className="flex-1 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
     />
     <span className="w-8 font-mono text-xs font-bold text-right text-gray-900">
@@ -243,7 +257,7 @@ export default function IdolReceiptPage() {
     setData({ ...data, items: data.items.filter((_, idx) => idx !== i) });
 
   return (
-    <div className="fixed inset-0 flex flex-col overflow-hidden font-mono text-gray-900 bg-gray-100 md:flex-row md:justify-center">
+    <div className="fixed inset-0 flex flex-col overflow-hidden text-gray-900 bg-gray-100 md:flex-row md:justify-center">
       {/* Left: Editor */}
       <div
         className={`w-full md:w-[450px] md:h-full flex flex-col h-full bg-white  z-10 transition-transform duration-300 ${
@@ -256,7 +270,8 @@ export default function IdolReceiptPage() {
           <div className="flex items-center gap-3">
             <Link
               to="/"
-              className="p-2 transition-colors rounded-full hover:bg-gray-100"
+              className="p-2 transition-colors rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+              aria-label={lang === "zh" ? "返回首页" : "Back to home"}
             >
               <ChevronLeft size={18} />
             </Link>
@@ -264,7 +279,7 @@ export default function IdolReceiptPage() {
               <h1 className="text-lg font-black tracking-wider text-gray-900 truncate">
                 {t.title}
               </h1>
-              <p className="overflow-hidden text-xs font-bold text-gray-400 whitespace-nowrap text-ellipsis">
+              <p className="overflow-hidden text-xs font-bold text-gray-600 whitespace-nowrap text-ellipsis">
                 {t.subtitle}
               </p>
             </div>
@@ -291,7 +306,7 @@ export default function IdolReceiptPage() {
             />
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase">
+                <label className="block text-[10px] font-bold text-gray-700 mb-1.5 uppercase">
                   {t.labelActivity}
                 </label>
                 <select
@@ -299,6 +314,7 @@ export default function IdolReceiptPage() {
                   onChange={(e) =>
                     setData({ ...data, activity: e.target.value })
                   }
+                  aria-label={t.labelActivity}
                   className="w-full bg-gray-50 border border-gray-200 p-2.5 text-sm focus:border-black outline-none rounded-sm"
                 >
                   {Object.entries(t.activities).map(([key, label]) => (
@@ -309,7 +325,7 @@ export default function IdolReceiptPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase">
+                <label className="block text-[10px] font-bold text-gray-700 mb-1.5 uppercase">
                   {t.labelIdentity}
                 </label>
                 <select
@@ -317,6 +333,7 @@ export default function IdolReceiptPage() {
                   onChange={(e) =>
                     setData({ ...data, identity: e.target.value })
                   }
+                  aria-label={t.labelIdentity}
                   className="w-full bg-gray-50 border border-gray-200 p-2.5 text-sm focus:border-black outline-none rounded-sm"
                 >
                   {Object.entries(t.identities).map(([key, label]) => (
@@ -344,24 +361,29 @@ export default function IdolReceiptPage() {
                 <input
                   value={item.name}
                   onChange={(e) => updateItem(i, "name", e.target.value)}
+                  aria-label={t.labelItem}
                   className="flex-1 p-2 text-sm border border-gray-200 rounded-sm outline-none bg-gray-50 focus:border-black"
                   placeholder={t.labelItem}
                 />
                 <input
                   value={item.price}
                   onChange={(e) => updateItem(i, "price", e.target.value)}
+                  aria-label={t.labelCost}
                   className="w-16 p-2 text-sm text-right border border-gray-200 rounded-sm outline-none bg-gray-50 focus:border-black"
                   placeholder={t.labelCost}
                 />
                 <button
+                  type="button"
                   onClick={() => removeItem(i)}
                   className="text-gray-300 hover:text-red-500"
+                  aria-label={lang === "zh" ? "删除项目" : "Remove item"}
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={16} aria-hidden="true" />
                 </button>
               </div>
             ))}
             <button
+              type="button"
               onClick={addItem}
               className="flex items-center gap-1 mt-2 text-xs font-bold text-pink-600 hover:text-pink-700"
             >
@@ -409,20 +431,27 @@ export default function IdolReceiptPage() {
                     </span>
                   </div>
                   <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <button
-                        key={s}
-                        onClick={() => setData({ ...data, scream: s })}
-                        className={
-                          s <= data.scream ? "text-pink-500" : "text-gray-300"
-                        }
-                      >
-                        <Heart
-                          size={16}
-                          fill={s <= data.scream ? "currentColor" : "none"}
-                        />
-                      </button>
-                    ))}
+                    <div role="radiogroup" aria-label={t.labelScream} className="flex gap-1">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => setData({ ...data, scream: s })}
+                          role="radio"
+                          aria-checked={s === data.scream}
+                          aria-label={`${t.labelScream} ${s}/5`}
+                          className={
+                            s <= data.scream ? "text-pink-500" : "text-gray-300"
+                          }
+                        >
+                          <Heart
+                            size={16}
+                            fill={s <= data.scream ? "currentColor" : "none"}
+                            aria-hidden="true"
+                          />
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -544,7 +573,7 @@ const IdolPreview = React.forwardRef(({ data, text }, ref) => {
 
   return (
     <div ref={ref} className="w-[380px] relative">
-      <div className="min-h-[600px] bg-white p-6 pb-8 font-mono flex flex-col shadow-sm">
+      <div className="min-h-[600px] bg-white p-6 pb-8 font-receipt tracking-receipt flex flex-col shadow-sm">
         {/* Header */}
         <div className="mb-4 text-center">
           <h1
@@ -592,7 +621,7 @@ const IdolPreview = React.forwardRef(({ data, text }, ref) => {
                 <span className="max-w-[240px] text-black">
                   {item.name || "---"}
                 </span>
-                <span className="font-mono font-bold">
+                <span className="font-receipt font-bold">
                   {item.price || "0.00"}
                 </span>
               </div>
@@ -605,7 +634,7 @@ const IdolPreview = React.forwardRef(({ data, text }, ref) => {
         </div>
 
         {/* Vital Signs */}
-        <div className="p-4 mb-4 font-mono text-xs border-2 border-black">
+        <div className="p-4 mb-4 font-receipt text-xs border-2 border-black">
           <div className="text-center text-[10px] font-bold mb-3 uppercase text-black border-b border-dashed border-black pb-1">
             -- {text.vitalSigns} --
           </div>
@@ -661,7 +690,7 @@ const IdolPreview = React.forwardRef(({ data, text }, ref) => {
               {text.labelHighlight}
             </div>
             <div className="relative pl-3 border-l-4 border-black">
-              <p className="font-serif text-sm italic leading-relaxed text-justify text-black whitespace-pre-wrap">
+              <p className="text-sm italic leading-relaxed text-justify text-black whitespace-pre-wrap">
                 "{data.highlight}"
               </p>
             </div>
@@ -674,7 +703,7 @@ const IdolPreview = React.forwardRef(({ data, text }, ref) => {
             <div className="text-[10px] font-bold uppercase text-gray-500 border-b border-black pb-1 mb-2">
               {text.labelPromise}
             </div>
-            <p className="font-mono text-xs leading-relaxed text-gray-800 whitespace-pre-wrap">
+            <p className="font-receipt text-xs leading-relaxed text-gray-800 whitespace-pre-wrap">
               {data.promise}
             </p>
           </div>

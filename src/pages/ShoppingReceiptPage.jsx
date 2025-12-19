@@ -159,7 +159,7 @@ export default function ShoppingReceiptPage() {
   const toggleSection = (s) =>
     setExpandedSection(expandedSection === s ? null : s);
 
-  // 使用自定义 Hook 处理下载
+  // Use custom hook for download/export
   const {
     isDownloading,
     handleDownload: download,
@@ -185,19 +185,19 @@ export default function ShoppingReceiptPage() {
     setData({ ...data, items: newItems });
   };
 
-  // 计算总额（使用 useMemo 优化）
+  // Calculate total (memoized)
   const { total, hasTotal } = useMemo(
     () => calculateShoppingTotal(data.items),
     [data.items]
   );
 
-  // 错误提示
+  // Error handling
   if (error) {
     alert(error);
   }
 
   return (
-    <div className="fixed inset-0 flex flex-col overflow-hidden text-gray-900 bg-gray-100 font-receipt tracking-receipt md:flex-row md:justify-center">
+    <div className="fixed inset-0 flex flex-col overflow-hidden text-gray-900 bg-gray-100 md:flex-row md:justify-center">
       {/* Editor */}
       <div
         className={`w-full md:w-[450px] flex flex-col h-full bg-white  z-10 transition-transform duration-300 ${
@@ -210,7 +210,8 @@ export default function ShoppingReceiptPage() {
           <div className="flex items-center gap-3">
             <Link
               to="/"
-              className="p-2 transition-colors rounded-full hover:bg-gray-100"
+              className="p-2 transition-colors rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+              aria-label={lang === "zh" ? "返回首页" : "Back to home"}
             >
               <ChevronLeft size={18} />
             </Link>
@@ -218,7 +219,7 @@ export default function ShoppingReceiptPage() {
               <h1 className="text-lg font-black tracking-wider text-gray-900 truncate">
                 {t.title}
               </h1>
-              <p className="overflow-hidden text-xs font-bold text-gray-400 whitespace-nowrap text-ellipsis">
+              <p className="overflow-hidden text-xs font-bold text-gray-600 whitespace-nowrap text-ellipsis">
                 {t.subtitle}
               </p>
             </div>
@@ -250,7 +251,7 @@ export default function ShoppingReceiptPage() {
             />
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase">
+                <label className="block text-[10px] font-bold text-gray-700 mb-1.5 uppercase">
                   {t.labelChannel}
                 </label>
                 <select
@@ -258,6 +259,7 @@ export default function ShoppingReceiptPage() {
                   onChange={(e) =>
                     setData({ ...data, channel: e.target.value })
                   }
+                  aria-label={t.labelChannel}
                   className="w-full bg-gray-50 border border-gray-200 p-2.5 text-sm focus:border-black outline-none rounded-sm"
                 >
                   {Object.entries(t.channelOptions).map(([key, label]) => (
@@ -268,7 +270,7 @@ export default function ShoppingReceiptPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase">
+                <label className="block text-[10px] font-bold text-gray-700 mb-1.5 uppercase">
                   {t.labelCategory}
                 </label>
                 <select
@@ -276,6 +278,7 @@ export default function ShoppingReceiptPage() {
                   onChange={(e) =>
                     setData({ ...data, category: e.target.value })
                   }
+                  aria-label={t.labelCategory}
                   className="w-full bg-gray-50 border border-gray-200 p-2.5 text-sm focus:border-black outline-none rounded-sm"
                 >
                   {Object.entries(t.categoryOptions).map(([key, label]) => (
@@ -301,6 +304,7 @@ export default function ShoppingReceiptPage() {
                     value={item.name}
                     onChange={(e) => updateItem(index, "name", e.target.value)}
                     placeholder={t.labelItemName}
+                    aria-label={t.labelItemName}
                     className="flex-1 p-2 text-sm border border-gray-200 rounded-sm outline-none bg-gray-50 focus:border-black"
                   />
                   <input
@@ -308,17 +312,21 @@ export default function ShoppingReceiptPage() {
                     value={item.price === null ? "" : item.price}
                     onChange={(e) => updateItem(index, "price", e.target.value)}
                     placeholder="¥ (可选)"
+                    aria-label={t.labelItemPrice || t.labelItemName}
                     className="w-24 p-2 text-sm border border-gray-200 rounded-sm outline-none bg-gray-50 focus:border-black"
                   />
                   <button
+                    type="button"
                     onClick={() => removeItem(index)}
                     className="p-2 text-gray-400 transition-colors hover:text-red-500"
+                    aria-label={lang === "zh" ? "删除项目" : "Remove item"}
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={16} aria-hidden="true" />
                   </button>
                 </div>
               ))}
               <button
+                type="button"
                 onClick={addItem}
                 className="flex items-center justify-center w-full gap-2 py-2 text-sm font-bold text-gray-500 transition-colors border-2 border-gray-300 border-dashed hover:border-black hover:text-black"
               >
@@ -366,12 +374,13 @@ export default function ShoppingReceiptPage() {
               />
             </div>
             <div>
-              <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase">
+              <label className="block text-[10px] font-bold text-gray-700 mb-1.5 uppercase">
                 {t.labelVerdict}
               </label>
               <select
                 value={data.verdict}
                 onChange={(e) => setData({ ...data, verdict: e.target.value })}
+                aria-label={t.labelVerdict}
                 className="w-full bg-gray-50 border border-gray-200 p-2.5 text-sm focus:border-black outline-none rounded-sm"
               >
                 {Object.entries(t.verdictOptions).map(([key, label]) => (
@@ -459,8 +468,8 @@ export default function ShoppingReceiptPage() {
 }
 
 /**
- * 购物收据预览组件
- * 展示购物清单、消费总额和消费评价
+ * Shopping receipt preview component.
+ * Shows the shopping list, totals, and a spending verdict.
  */
 const ShoppingPreview = React.forwardRef(
   ({ data, text, total, hasTotal }, ref) => {

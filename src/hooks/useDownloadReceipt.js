@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toPng } from 'html-to-image';
+import '../styles/receipt-font.css';
 import {
   EXPORT_IMAGE_QUALITY,
   EXPORT_IMAGE_PIXEL_RATIO,
@@ -26,13 +27,27 @@ export const useDownloadReceipt = (receiptType = 'RECEIPT') => {
     setError(null);
 
     try {
-      // Wait for fonts to load
-      if (document.fonts) {
-        await document.fonts.ready;
+      // Ensure the receipt pixel font is actually loaded before rendering to canvas.
+      // This avoids fallback fonts in the exported PNG (especially for CJK glyphs).
+      if (document.fonts?.load) {
+        try {
+          // Attempt to load primary pixel fonts with essential glyphs for faster check
+          await Promise.all([
+            document.fonts.load('400 16px "Fusion Pixel 12px Monospaced SC"', "LIFE_LOGGER"),
+            document.fonts.load('400 16px "Zpix"', "测试"),
+          ]);
+          // Wait for all fonts to be ready
+          await document.fonts.ready;
+        } catch (fontErr) {
+          console.warn('Font loading check timed out or failed, proceeding with fallback delay', fontErr);
+          await new Promise((resolve) => setTimeout(resolve, 500));
+        }
       } else {
-        await new Promise(resolve => setTimeout(resolve, 300));
+        // Fallback for browsers without document.fonts API
+        await new Promise((resolve) => setTimeout(resolve, 800));
       }
 
+      // Additional stability delay
       await new Promise(resolve => setTimeout(resolve, EXPORT_IMAGE_DELAY));
 
       // Verify element visibility
@@ -54,8 +69,6 @@ export const useDownloadReceipt = (receiptType = 'RECEIPT') => {
       link.download = `${receiptType}_${Date.now()}.png`;
       link.href = dataUrl;
       link.click();
-
-      console.log('Download successful:', link.download);
     } catch (err) {
       console.error('Download failed:', err);
 

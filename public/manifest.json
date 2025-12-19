@@ -1,0 +1,22 @@
+{
+  "name": "LIFE_LOGGER - 生活小票生成器",
+  "short_name": "LIFE_LOGGER",
+  "description": "用复古热敏打印小票风格记录生活。量化心情、追踪饮食、存档电影、监测睡眠，将转瞬即逝的体验转化为可保存的数据。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "categories": ["lifestyle", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

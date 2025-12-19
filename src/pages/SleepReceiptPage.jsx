@@ -168,28 +168,31 @@ export default function SleepReceiptPage() {
   const toggleSection = (s) =>
     setExpandedSection(expandedSection === s ? null : s);
 
-  // 使用自定义 Hook 处理下载
+  // Use custom hook for download/export
   const {
     isDownloading,
     handleDownload: download,
     error,
   } = useDownloadReceipt("SLEEP_LOG");
 
-  // 计算睡眠时长（使用 useMemo 优化性能）
+  // Calculate sleep duration (memoized)
   const duration = useMemo(
     () => calculateSleepDuration(data.bedtime, data.wakeTime),
     [data.bedtime, data.wakeTime]
   );
 
-  // 错误提示
+  // Error handling
   if (error) {
     alert(error);
   }
 
   return (
-    <div className="fixed inset-0 bg-gray-100 text-gray-900 font-mono flex flex-col md:flex-row md:justify-center overflow-hidden">
+    <div className="fixed inset-0 bg-gray-100 text-gray-900 flex flex-col md:flex-row md:justify-center overflow-hidden">
       {/* Left: Editor */}
       <div
+        id="edit-panel"
+        role="tabpanel"
+        aria-labelledby="tab-edit"
         className={`w-full md:w-[450px] md:h-full flex flex-col h-full bg-white z-10 transition-transform duration-300 ${
           mobileTab === "edit"
             ? "translate-x-0"
@@ -209,7 +212,7 @@ export default function SleepReceiptPage() {
               <h1 className="text-lg font-black tracking-wider text-gray-900 truncate">
                 {t.title}
               </h1>
-              <p className="overflow-hidden text-xs font-bold text-gray-400 whitespace-nowrap text-ellipsis">
+              <p className="overflow-hidden text-xs font-bold text-gray-600 whitespace-nowrap text-ellipsis">
                 {t.subtitle}
               </p>
             </div>
@@ -217,7 +220,6 @@ export default function SleepReceiptPage() {
           <button
             onClick={toggleLang}
             className="flex items-center gap-1 px-3 py-2 text-xs font-bold bg-gray-100 rounded hover:bg-gray-200 shrink-0 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-            aria-label={lang === "zh" ? "切换到英文" : "Switch to Chinese"}
           >
             <Globe size={12} /> {lang === "zh" ? "EN" : "中文"}
           </button>
@@ -248,7 +250,7 @@ export default function SleepReceiptPage() {
               />
             </div>
             <div>
-              <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase">
+              <label className="block text-[10px] font-bold text-gray-700 mb-1.5 uppercase">
                 {t.labelMorningMood}
               </label>
               <select
@@ -256,6 +258,7 @@ export default function SleepReceiptPage() {
                 onChange={(e) =>
                   setData({ ...data, morningMood: e.target.value })
                 }
+                aria-label={t.labelMorningMood}
                 className="w-full bg-gray-50 border border-gray-200 p-2.5 text-sm focus:border-black outline-none rounded-sm"
               >
                 {Object.entries(t.moodOptions).map(([key, label]) => (
@@ -368,6 +371,9 @@ export default function SleepReceiptPage() {
 
       {/* Right: Preview */}
       <div
+        id="preview-panel"
+        role="tabpanel"
+        aria-labelledby="tab-preview"
         className={`w-full md:w-[450px] md:h-full bg-gray-200 relative z-10 transition-transform duration-300 ${
           mobileTab === "preview"
             ? "translate-x-0"
@@ -418,6 +424,7 @@ export default function SleepReceiptPage() {
               : "text-gray-400 hover:text-white"
           }`}
           role="tab"
+          id="tab-edit"
           aria-selected={mobileTab === "edit"}
           aria-controls="edit-panel"
         >
@@ -432,6 +439,7 @@ export default function SleepReceiptPage() {
               : "text-gray-400 hover:text-white"
           }`}
           role="tab"
+          id="tab-preview"
           aria-selected={mobileTab === "preview"}
           aria-controls="preview-panel"
         >
@@ -444,8 +452,8 @@ export default function SleepReceiptPage() {
 }
 
 /**
- * 睡眠收据预览组件
- * 展示睡眠数据的收据样式预览，包括评分、时长、梦境等信息
+ * Sleep receipt preview component.
+ * Renders sleep data in a receipt-like layout (score, duration, dreams, etc.).
  */
 const SleepPreview = React.forwardRef(({ data, text, duration }, ref) => {
   const metricMap = {
@@ -455,19 +463,19 @@ const SleepPreview = React.forwardRef(({ data, text, duration }, ref) => {
     deepSleep: text.labelDeepSleep,
   };
 
-  // 计算睡眠综合评分（使用 useMemo 优化）
+  // Calculate overall sleep score (memoized)
   const sleepScore = useMemo(
     () => calculateSleepScore(data.metrics),
     [data.metrics]
   );
 
-  // 获取评分等级标签
+  // Resolve score label
   const scoreLabel = useMemo(
     () => getSleepScoreLabel(sleepScore, text.scoreLabels),
     [sleepScore, text.scoreLabels]
   );
 
-  // 获取选中的睡前活动
+  // Collect selected pre-sleep activities
   const activeActivities = useMemo(
     () =>
       Object.entries(data.preSleepActivities || {})

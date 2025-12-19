@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useRef, useMemo, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useContext,
+  useId,
+} from "react";
 import { Link } from "react-router-dom";
 import {
   Printer,
@@ -16,6 +23,11 @@ import {
 } from "lucide-react";
 import { LanguageContext } from "./AppRouter"; // Import LanguageContext
 import { useDownloadReceipt } from "./hooks/useDownloadReceipt";
+import {
+  InputSection,
+  InputGroup,
+  SliderItem,
+} from "./components/common/CommonComponents";
 
 const TEXT = {
   zh: {
@@ -139,7 +151,8 @@ export default function SoulReceiptGenerator() {
     year: 2025,
   });
   const receiptRef = useRef(null);
-  const { isDownloading, handleDownload, error } = useDownloadReceipt('RECEIPT');
+  const { isDownloading, handleDownload, error } =
+    useDownloadReceipt("RECEIPT");
   const [expandedSection, setExpandedSection] = useState("env");
   const [mobileTab, setMobileTab] = useState("edit");
   const t = TEXT[lang];
@@ -211,9 +224,12 @@ export default function SoulReceiptGenerator() {
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-100 text-gray-900 font-mono flex flex-col md:flex-row md:justify-center overflow-hidden">
-      {/* --- 编辑面板 --- */}
+    <div className="fixed inset-0 bg-gray-100 text-gray-900 flex flex-col md:flex-row md:justify-center overflow-hidden">
+      {/* --- Editor panel --- */}
       <div
+        id="edit-panel"
+        role="tabpanel"
+        aria-labelledby="tab-edit"
         className={`w-full md:w-[450px] md:h-full flex flex-col h-full bg-white transition-transform duration-300 ${
           mobileTab === "edit"
             ? "translate-x-0"
@@ -233,14 +249,13 @@ export default function SoulReceiptGenerator() {
               <h1 className="text-xl font-black text-gray-900 tracking-wider">
                 {t.title}
               </h1>
-              <p className="text-xs text-gray-400 font-bold">{t.subtitle}</p>
+              <p className="text-xs text-gray-600 font-bold">{t.subtitle}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={toggleLang}
               className="text-xs px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded font-bold flex items-center gap-1 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-              aria-label={lang === "zh" ? "切换到英文" : "Switch to Chinese"}
             >
               <Globe size={12} aria-hidden="true" />{" "}
               {lang === "zh" ? "EN" : "中文"}
@@ -278,6 +293,7 @@ export default function SoulReceiptGenerator() {
               value={data.visualScan}
               onChange={(e) => setData({ ...data, visualScan: e.target.value })}
               placeholder={t.visualPlaceholder}
+              aria-label={t.visualTitle}
               className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none rounded-sm resize-none h-24 transition-all"
             />
           </InputSection>
@@ -308,7 +324,7 @@ export default function SoulReceiptGenerator() {
                 value={data.humoral.mel}
                 onChange={(v) => updateHumoral("mel", v)}
               />
-              <div className="text-[10px] text-gray-400 text-center pt-2 border-t border-gray-200">
+              <div className="text-[10px] text-gray-600 text-center pt-2 border-t border-gray-200">
                 {t.humoralTotal}:{" "}
                 {Object.values(data.humoral).reduce((a, b) => a + b, 0)}%
               </div>
@@ -364,17 +380,21 @@ export default function SoulReceiptGenerator() {
                     value={task}
                     onChange={(e) => updateTask(index, e.target.value)}
                     placeholder={t.newTaskPlaceholder}
+                    aria-label={`${t.tasksTitle} ${index + 1}`}
                     className="flex-1 bg-transparent border-b border-gray-200 py-1.5 text-sm focus:border-black outline-none transition-colors text-gray-800 placeholder-gray-300"
                   />
                   <button
+                    type="button"
                     onClick={() => removeTask(index)}
                     className="text-gray-300 hover:text-red-500 transition-colors p-1"
+                    aria-label={lang === "zh" ? "删除任务" : "Remove task"}
                   >
                     <Trash2 size={14} />
                   </button>
                 </div>
               ))}
               <button
+                type="button"
                 onClick={addTask}
                 className="mt-2 text-xs flex items-center gap-1 text-emerald-600 font-bold hover:text-emerald-700 px-1 py-2"
               >
@@ -386,8 +406,11 @@ export default function SoulReceiptGenerator() {
         </div>
       </div>
 
-      {/* --- 预览面板 --- */}
+      {/* --- Preview panel --- */}
       <div
+        id="preview-panel"
+        role="tabpanel"
+        aria-labelledby="tab-preview"
         className={`w-full md:w-[450px] md:h-full bg-gray-200 relative z-10 transition-transform duration-300 ${
           mobileTab === "preview"
             ? "translate-x-0"
@@ -425,7 +448,7 @@ export default function SoulReceiptGenerator() {
         </div>
       </div>
 
-      {/* --- 移动端标签栏 --- */}
+      {/* --- Mobile tab bar --- */}
       <nav
         className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-black text-white rounded-full px-1.5 py-1.5 shadow-2xl flex gap-1"
         role="tablist"
@@ -439,6 +462,7 @@ export default function SoulReceiptGenerator() {
               : "text-gray-400 hover:text-white"
           }`}
           role="tab"
+          id="tab-edit"
           aria-selected={mobileTab === "edit"}
           aria-controls="edit-panel"
         >
@@ -452,6 +476,7 @@ export default function SoulReceiptGenerator() {
               : "text-gray-400 hover:text-white"
           }`}
           role="tab"
+          id="tab-preview"
           aria-selected={mobileTab === "preview"}
           aria-controls="preview-panel"
         >
@@ -462,97 +487,7 @@ export default function SoulReceiptGenerator() {
   );
 }
 
-// 辅助组件
-const SliderItem = ({ label, value, onChange }) => (
-  <div className="flex items-center gap-3">
-    <span className="w-20 text-[10px] font-bold uppercase text-gray-500 truncate">
-      {label}
-    </span>
-    <input
-      type="range"
-      min="0"
-      max="100"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="flex-1 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
-    />
-    <span className="w-8 text-right text-xs font-mono font-bold text-gray-900">
-      {value}
-    </span>
-  </div>
-);
-
-const InputSection = ({ title, desc, children, isOpen, onToggle }) => (
-  <div
-    className={`border border-gray-200 rounded-lg bg-white overflow-hidden transition-all duration-300 ${
-      isOpen ? "shadow-md ring-1 ring-black/5" : "hover:border-gray-300"
-    }`}
-  >
-    <button
-      onClick={onToggle}
-      className="w-full flex items-center justify-between p-4 text-left bg-white hover:bg-gray-50 transition-colors"
-    >
-      <div>
-        <h3
-          className={`text-sm font-bold uppercase tracking-wider ${
-            isOpen ? "text-black" : "text-gray-600"
-          }`}
-        >
-          {title}
-        </h3>
-        <p className="text-[10px] text-gray-400 mt-0.5 font-medium leading-tight">
-          {desc}
-        </p>
-      </div>
-      <div
-        className={`text-gray-400 transition-transform duration-300 ${
-          isOpen ? "rotate-180 text-black" : ""
-        }`}
-      >
-        <ChevronDown size={18} />
-      </div>
-    </button>
-    <div
-      className={`transition-all duration-300 ease-in-out ${
-        isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
-      }`}
-    >
-      <div className="p-4 pt-0 border-t border-gray-50">
-        <div className="pt-4">{children}</div>
-      </div>
-    </div>
-  </div>
-);
-
-const InputGroup = ({
-  label,
-  value,
-  onChange,
-  isTextArea = false,
-  className = "",
-}) => (
-  <div className={className}>
-    <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">
-      {label}
-    </label>
-    {isTextArea ? (
-      <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-gray-50 border border-gray-200 p-2.5 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none rounded-sm resize-none h-20 block transition-all"
-      />
-    ) : (
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-gray-50 border border-gray-200 p-2.5 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none rounded-sm block transition-all"
-      />
-    )}
-  </div>
-);
-
-// 年进度条组件
+// Year progress bar
 const YearProgressBar = ({ progress, year }) => {
   return (
     <div className="flex items-center w-full text-[10px] font-bold mt-1 pt-2 border-t border-dashed border-gray-400 text-gray-800 leading-relaxed gap-2">
@@ -583,7 +518,7 @@ const YearProgressBar = ({ progress, year }) => {
   );
 };
 
-// 条形码组件
+// Barcode
 const DeterministicBarcode = ({ dataString }) => {
   const bars = useMemo(() => {
     let hash = 0;
@@ -618,7 +553,7 @@ const DeterministicBarcode = ({ dataString }) => {
   );
 };
 
-// 收据预览组件
+// Receipt preview
 const ReceiptPreview = React.forwardRef(({ data, dateTime, text }, ref) => {
   const { san, phl, cho, mel } = data.humoral;
   const total = san + phl + cho + mel;
@@ -637,9 +572,9 @@ const ReceiptPreview = React.forwardRef(({ data, dateTime, text }, ref) => {
   return (
     <div
       ref={ref}
-      className="w-[380px] min-h-[600px] relative font-mono mx-auto select-none flex flex-col"
+      className="w-[380px] min-h-[600px] relative font-receipt tracking-receipt mx-auto select-none flex flex-col"
     >
-      {/* 收据内容 */}
+      {/* Receipt content */}
       <div className="bg-white p-6 pb-8 flex-1 flex flex-col gap-4">
         {/* Header */}
         <div className="text-center mb-2 leading-normal">
@@ -655,7 +590,7 @@ const ReceiptPreview = React.forwardRef(({ data, dateTime, text }, ref) => {
         </div>
         <div className="border-t-2 border-dashed border-black my-2"></div>
 
-        {/* 时间地点信息 */}
+        {/* Date and location */}
         <div>
           <div className="grid grid-cols-2 gap-y-1 text-sm font-bold w-full leading-relaxed">
             <div className="pr-1 whitespace-nowrap overflow-hidden">
@@ -785,10 +720,10 @@ const ReceiptPreview = React.forwardRef(({ data, dateTime, text }, ref) => {
 
         {showRx && (
           <div className="border-[3px] border-double border-black p-3 text-center mt-2 relative">
-            <h2 className="font-serif italic font-bold text-lg mb-2 leading-relaxed">
+            <h2 className="italic font-bold text-lg mb-2 leading-relaxed">
               {text.rxLabel}
             </h2>
-            <p className="text-xs text-gray-700 font-serif leading-relaxed px-2 break-words whitespace-pre-wrap">
+            <p className="text-xs text-gray-700 leading-relaxed px-2 break-words whitespace-pre-wrap">
               "{data.medievalRx}"
             </p>
           </div>
@@ -848,7 +783,7 @@ const ReceiptPreview = React.forwardRef(({ data, dateTime, text }, ref) => {
           </div>
         )}
 
-        {/* 页脚 */}
+        {/* Footer */}
         <div className="mt-1 flex flex-col items-center">
           <YearProgressBar
             progress={dateTime.yearProgress}
@@ -861,7 +796,7 @@ const ReceiptPreview = React.forwardRef(({ data, dateTime, text }, ref) => {
         </div>
       </div>
 
-      {/* 撕裂边缘效果 */}
+      {/* Tear edge effect */}
       <div className="w-full h-[12px] overflow-hidden leading-[0]">
         <svg
           width="100%"

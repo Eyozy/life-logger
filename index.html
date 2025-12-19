@@ -2,7 +2,7 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>LIFE_LOGGER - 生活小票生成器 | 将体验转化为小票</title>
     <meta name="description" content="LIFE_LOGGER - 用复古热敏打印小票风格记录生活。量化心情、追踪饮食、存档电影、监测睡眠，将转瞬即逝的体验转化为可保存的数据，支持 13+ 生活场景日志记录。" />
@@ -11,6 +11,10 @@
     <meta http-equiv="content-language" content="zh-CN, en" />
     <meta name="application-name" content="LIFE_LOGGER" />
     <meta name="theme-color" content="#0f172a" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="LIFE_LOGGER" />
 
     <link rel="canonical" href="https://life-logger.netlify.app/" />
 
@@ -29,11 +33,16 @@
     <meta name="twitter:description" content="让每一次体验都生成一张数据小票，支持多场景生活记录与 PNG 导出。" />
     <meta name="twitter:image" content="https://life-logger.netlify.app/og.jpg" />
 
-    <!-- Resource Hints for Performance -->
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <!-- DNS Prefetch / Preconnect for receipt font CDN -->
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 
+    <!-- Icons -->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
   </head>
   <body>
     <div id="root"></div>

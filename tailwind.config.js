@@ -7,14 +7,12 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        // 热敏打印机字体（小票字体）- 使用 Fusion Pixel 12px
-        'receipt': ['"Fusion Pixel 12px Proportional SC"', 'monospace'],
-        'receipt-alt': ['"Fusion Pixel 12px Proportional SC"', 'monospace'],
-        // 保留原有的 mono 字体作为备用
-        'mono': ['"Fusion Pixel 12px Proportional SC"', 'monospace'],
+        // Receipt pixel font (used only for receipt output)
+        'receipt': ['"Fusion Pixel 12px Monospaced SC"', '"Zpix"', 'monospace'],
+        'receipt-alt': ['"Fusion Pixel 12px Monospaced SC"', '"Zpix"', 'monospace'],
       },
       letterSpacing: {
-        'receipt': '0.05em', // 小票特有的字符间距
+        'receipt': '0.05em', // Receipt-specific character spacing
       },
     },
   },

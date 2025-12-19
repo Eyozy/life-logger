@@ -1,54 +1,62 @@
-import React from 'react';
+import React, { useId } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 /**
- * 可折叠的输入区块组件
- * 用于组织表单的不同部分，支持展开/折叠
- * 
- * @param {Object} props - 组件属性
- * @param {string} props.title - 区块标题
- * @param {React.ReactNode} props.children - 子组件内容
- * @param {boolean} props.isOpen - 是否展开
- * @param {Function} props.onToggle - 切换展开/折叠的回调函数
+ * Collapsible form section component.
+ * Used to group related inputs with an expand/collapse UI.
+ *
+ * @param {Object} props - Component props
+ * @param {string} props.title - Section title
+ * @param {React.ReactNode} props.children - Section content
+ * @param {boolean} props.isOpen - Whether the section is expanded
+ * @param {Function} props.onToggle - Toggle expand/collapse callback
  */
-export const InputSection = ({ title, children, isOpen, onToggle }) => (
+export const InputSection = ({ title, children, isOpen, onToggle }) => {
+  const contentId = useId();
+
+  return (
   <div className={`border border-gray-200 rounded-lg bg-white overflow-hidden transition-all duration-300 mb-3 ${isOpen ? 'shadow-md ring-1 ring-black/5' : 'hover:border-gray-300'}`}>
-    {/* 标题栏 - 可点击切换展开状态 */}
+    {/* Header: click to toggle expanded state */}
     <button 
       onClick={onToggle} 
       className="w-full flex items-center justify-between p-4 text-left bg-white hover:bg-gray-50 transition-colors"
+      aria-expanded={isOpen}
+      aria-controls={contentId}
     >
-      <h3 className={`text-sm font-bold uppercase tracking-wider ${isOpen ? 'text-black' : 'text-gray-600'}`}>
+      <h2 className={`text-sm font-bold uppercase tracking-wider ${isOpen ? 'text-black' : 'text-gray-700'}`}>
         {title}
-      </h3>
+      </h2>
       <div className={`text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-black' : ''}`}>
         <ChevronDown size={18} />
       </div>
     </button>
     
-    {/* 内容区 - 展开时显示 */}
-    <div className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}> 
+    {/* Content: shown when expanded */}
+    <div id={contentId} className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}> 
       <div className="p-4 pt-0 border-t border-gray-50">
         <div className="pt-4 space-y-4">{children}</div>
       </div>
     </div>
   </div>
-);
+  );
+};
 
 /**
- * 输入框组件
- * 支持文本输入和多行文本输入，多行文本会自动调整高度
- * 
- * @param {Object} props - 组件属性
- * @param {string} props.label - 标签文本
- * @param {string} props.value - 输入值
- * @param {Function} props.onChange - 值变化回调
- * @param {string} [props.placeholder=''] - 占位符文本
- * @param {boolean} [props.isTextArea=false] - 是否为多行文本
- * @param {string} [props.type='text'] - 输入类型
+ * Input field component.
+ * Supports both single-line input and auto-resizing textarea.
+ *
+ * @param {Object} props - Component props
+ * @param {string} props.label - Label text
+ * @param {string} props.value - Input value
+ * @param {Function} props.onChange - Change callback
+ * @param {string} [props.placeholder=''] - Placeholder text
+ * @param {boolean} [props.isTextArea=false] - Render as textarea
+ * @param {string} [props.type='text'] - Input type
  */
 export const InputGroup = ({ label, value, onChange, placeholder = '', isTextArea = false, type = 'text' }) => {
-  // 多行文本自动调整高度
+  const inputId = useId();
+
+  // Auto-resize multiline textarea
   const handleTextareaChange = (e) => {
     onChange(e.target.value);
     const textarea = e.target;
@@ -58,11 +66,12 @@ export const InputGroup = ({ label, value, onChange, placeholder = '', isTextAre
 
   return (
     <div>
-      <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">
+      <label htmlFor={inputId} className="block text-[10px] font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
         {label}
       </label>
       {isTextArea ? (
         <textarea
+          id={inputId}
           value={value}
           onChange={handleTextareaChange}
           onInput={handleTextareaChange}
@@ -72,6 +81,7 @@ export const InputGroup = ({ label, value, onChange, placeholder = '', isTextAre
         />
       ) : (
         <input 
+          id={inputId}
           type={type} 
           value={value} 
           onChange={e => onChange(e.target.value)} 
@@ -84,14 +94,14 @@ export const InputGroup = ({ label, value, onChange, placeholder = '', isTextAre
 };
 
 /**
- * 滑动条评分组件
- * 用于输入 0-max 的数值评分
- * 
- * @param {Object} props - 组件属性
- * @param {string} props.label - 标签文本
- * @param {number} props.value - 当前值
- * @param {Function} props.onChange - 值变化回调
- * @param {number} [props.max=100] - 最大值
+ * Slider rating component.
+ * Used to input a numeric rating from 0..max.
+ *
+ * @param {Object} props - Component props
+ * @param {string} props.label - Label text
+ * @param {number} props.value - Current value
+ * @param {Function} props.onChange - Change callback
+ * @param {number} [props.max=100] - Max value
  */
 export const RatingSlider = ({ label, value, onChange, max = 100 }) => (
   <div className="flex items-center gap-3 min-w-0">
@@ -117,13 +127,13 @@ export const RatingSlider = ({ label, value, onChange, max = 100 }) => (
 );
 
 /**
- * 指标条形图组件
- * 用于在收据预览中显示评分指标
- * 
- * @param {Object} props - 组件属性
- * @param {string} props.label - 指标名称
- * @param {number} props.value - 指标值
- * @param {number} [props.max=10] - 最大值
+ * Metric bar component.
+ * Used to display a metric value in receipt previews.
+ *
+ * @param {Object} props - Component props
+ * @param {string} props.label - Metric label
+ * @param {number} props.value - Metric value
+ * @param {number} [props.max=100] - Max value
  */
 export const MetricBar = ({ label, value, max = 100 }) => (
   <div className="flex items-center gap-1.5 min-w-0 w-full">

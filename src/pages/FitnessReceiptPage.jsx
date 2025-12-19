@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useId } from "react";
 import { Link } from "react-router-dom";
 import {
   ChevronLeft,
@@ -96,7 +96,10 @@ const TEXT = {
   },
 };
 
-const InputSection = ({ title, children, isOpen, onToggle }) => (
+const InputSection = ({ title, children, isOpen, onToggle }) => {
+  const contentId = useId();
+
+  return (
   <div
     className={`border border-gray-200 rounded-lg bg-white overflow-hidden transition-all duration-300 mb-3 ${
       isOpen ? "shadow-md ring-1 ring-black/5" : "hover:border-gray-300"
@@ -105,14 +108,16 @@ const InputSection = ({ title, children, isOpen, onToggle }) => (
     <button
       onClick={onToggle}
       className="w-full flex items-center justify-between p-4 text-left bg-white hover:bg-gray-50 transition-colors"
+      aria-expanded={isOpen}
+      aria-controls={contentId}
     >
-      <h3
+      <h2
         className={`text-sm font-bold uppercase tracking-wider ${
-          isOpen ? "text-black" : "text-gray-600"
+          isOpen ? "text-black" : "text-gray-700"
         }`}
       >
         {title}
-      </h3>
+      </h2>
       <div
         className={`text-gray-400 transition-transform duration-300 ${
           isOpen ? "rotate-180 text-black" : ""
@@ -122,6 +127,7 @@ const InputSection = ({ title, children, isOpen, onToggle }) => (
       </div>
     </button>
     <div
+      id={contentId}
       className={`transition-all duration-300 ease-in-out ${
         isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
       }`}
@@ -131,7 +137,8 @@ const InputSection = ({ title, children, isOpen, onToggle }) => (
       </div>
     </div>
   </div>
-);
+  );
+};
 
 const InputGroup = ({
   label,
@@ -140,6 +147,8 @@ const InputGroup = ({
   placeholder,
   isTextArea = false,
 }) => {
+  const inputId = useId();
+
   const handleTextareaChange = (e) => {
     // Update the value
     onChange(e.target.value);
@@ -152,11 +161,12 @@ const InputGroup = ({
 
   return (
     <div>
-      <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">
+      <label htmlFor={inputId} className="block text-[10px] font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
         {label}
       </label>
       {isTextArea ? (
         <textarea
+          id={inputId}
           value={value}
           onChange={handleTextareaChange}
           onInput={handleTextareaChange} // Also handle paste and other input events
@@ -166,6 +176,7 @@ const InputGroup = ({
         />
       ) : (
         <input
+          id={inputId}
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -179,7 +190,7 @@ const InputGroup = ({
 
 const RatingSlider = ({ label, value, onChange }) => (
   <div className="flex items-center gap-3">
-    <span className="w-24 text-[10px] font-bold uppercase text-gray-500 truncate">
+    <span className="w-24 text-[10px] font-bold uppercase text-gray-700 truncate">
       {label}
     </span>
     <div className="flex-1 h-2 border border-gray-300 bg-gray-50 rounded-sm overflow-hidden relative">
@@ -191,6 +202,7 @@ const RatingSlider = ({ label, value, onChange }) => (
         value={value}
         onChange={(e) => onChange(parseInt(e.target.value))}
         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        aria-label={label}
       />
     </div>
     <span className="w-8 text-right text-xs font-mono font-bold text-gray-900">
@@ -234,9 +246,12 @@ export default function FitnessReceiptPage() {
     setExpandedSection(expandedSection === s ? null : s);
 
   return (
-    <div className="fixed inset-0 bg-gray-100 text-gray-900 font-mono flex flex-col md:flex-row md:justify-center overflow-hidden">
+    <div className="fixed inset-0 bg-gray-100 text-gray-900 flex flex-col md:flex-row md:justify-center overflow-hidden">
       {/* Editor */}
       <div
+        id="edit-panel"
+        role="tabpanel"
+        aria-labelledby="tab-edit"
         className={`w-full md:w-[450px] md:h-full flex flex-col h-full bg-white z-10 transition-transform duration-300 ${
           mobileTab === "edit"
             ? "translate-x-0"
@@ -256,7 +271,7 @@ export default function FitnessReceiptPage() {
               <h1 className="text-lg font-black text-gray-900 tracking-wider truncate">
                 {t.title}
               </h1>
-              <p className="text-xs text-gray-400 font-bold whitespace-nowrap overflow-hidden text-ellipsis">
+              <p className="text-xs text-gray-600 font-bold whitespace-nowrap overflow-hidden text-ellipsis">
                 {t.subtitle}
               </p>
             </div>
@@ -264,7 +279,6 @@ export default function FitnessReceiptPage() {
           <button
             onClick={toggleLang}
             className="text-xs px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded font-bold flex items-center gap-1 shrink-0 transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-            aria-label={lang === "zh" ? "切换到英文" : "Switch to Chinese"}
           >
             <Globe size={12} aria-hidden="true" />{" "}
             {lang === "zh" ? "EN" : "中文"}
@@ -279,12 +293,13 @@ export default function FitnessReceiptPage() {
             onToggle={() => toggleSection("workout")}
           >
             <div>
-              <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase">
+              <label className="block text-[10px] font-bold text-gray-700 mb-1.5 uppercase">
                 {t.labelType}
               </label>
               <select
                 value={data.type}
                 onChange={(e) => setData({ ...data, type: e.target.value })}
+                aria-label={t.labelType}
                 className="w-full bg-gray-50 border border-gray-200 p-2.5 text-sm focus:border-black outline-none rounded-sm"
               >
                 {Object.entries(t.types).map(([key, label]) => (
@@ -383,6 +398,9 @@ export default function FitnessReceiptPage() {
 
       {/* Preview */}
       <div
+        id="preview-panel"
+        role="tabpanel"
+        aria-labelledby="tab-preview"
         className={`w-full md:w-[450px] md:h-full bg-gray-200 relative z-0 transition-transform duration-300 ${
           mobileTab === "preview"
             ? "translate-x-0"
@@ -428,6 +446,7 @@ export default function FitnessReceiptPage() {
               : "text-gray-400 hover:text-white"
           }`}
           role="tab"
+          id="tab-edit"
           aria-selected={mobileTab === "edit"}
           aria-controls="edit-panel"
         >
@@ -442,6 +461,7 @@ export default function FitnessReceiptPage() {
               : "text-gray-400 hover:text-white"
           }`}
           role="tab"
+          id="tab-preview"
           aria-selected={mobileTab === "preview"}
           aria-controls="preview-panel"
         >
@@ -494,7 +514,7 @@ const FitnessPreview = React.forwardRef(({ data, text }, ref) => {
     // Wrap with a transparent div for html-to-image to capture everything
     <div ref={ref} className="w-[380px] flex flex-col relative">
       {/* Receipt Content */}
-      <div className="bg-white p-6 pb-8 flex-1 flex flex-col font-mono shadow-sm text-black">
+      <div className="bg-white p-6 pb-8 flex-1 flex flex-col font-receipt tracking-receipt shadow-sm text-black">
         {/* Header */}
         <div className="text-center mb-4">
           <h1
@@ -603,7 +623,7 @@ const FitnessPreview = React.forwardRef(({ data, text }, ref) => {
             <div className="text-[10px] font-bold uppercase border-b border-black pb-1 mb-2">
               {text.labelNotesSummary}
             </div>
-            <p className="text-xs font-mono leading-relaxed whitespace-pre-wrap">
+            <p className="text-xs font-receipt leading-relaxed whitespace-pre-wrap">
               {data.notes}
             </p>
           </div>
@@ -629,7 +649,7 @@ const FitnessPreview = React.forwardRef(({ data, text }, ref) => {
               );
             })}
           </div>
-          <div className="text-[10px] mt-1 font-mono">
+          <div className="text-[10px] mt-1 font-receipt">
             {Date.now().toString().slice(-8)}
           </div>
         </div>

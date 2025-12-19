@@ -9,7 +9,7 @@ A retro thermal receipt-style life logging app that uses data and visualization 
 ## ✨ Features
 
 - **13+ preset log templates** covering everyday life, sleep, food, fitness, entertainment, social events and travel.
-- **Thermal receipt look**: Fusion Pixel bitmap font, barcode and fixed 380px-wide exports.
+- **Thermal receipt look**: 380px-wide receipt layout, barcode, and pixel font for the receipt output.
 - **Interactive forms with live preview**: sliders, ratings and metrics update the receipt in real time.
 - **One-click PNG export**: generate high-quality images entirely in the browser, no server required.
 - **Bilingual interface**: switch between Chinese and English with fully aligned copy.
@@ -19,7 +19,7 @@ A retro thermal receipt-style life logging app that uses data and visualization 
 
 ### Prerequisites
 
-- Node.js 16+
+- Node.js 18+
 - Chrome / Firefox / Safari / Edge
 
 ### Install & run
@@ -37,7 +37,7 @@ Open **http://localhost:5173** in your browser.
 ## 🛠 Tech Stack
 
 - **Framework**: React 19, React Router DOM 7, Vite 6
-- **Styling**: Tailwind CSS 3, Fusion Pixel 12px bitmap font, Lucide React icon set
+- **Styling**: Tailwind CSS 3, Lucide React icon set
 - **Utilities**: `html-to-image` for client-side PNG export, PostCSS + Autoprefixer for CSS processing
 
 ## 💻 Development
@@ -69,4 +69,3 @@ All kinds of contributions are welcome: bug reports, copy tweaks, small improvem
 ## 📄 License
 
 This project uses the **MIT License**. See [LICENSE](LICENSE) for details.
-

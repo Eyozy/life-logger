@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useId } from "react";
 import { Link } from "react-router-dom";
 import {
   ChevronLeft,
@@ -90,7 +90,10 @@ const TEXT = {
 };
 
 // --- Shared Components ---
-const InputSection = ({ title, children, isOpen, onToggle }) => (
+const InputSection = ({ title, children, isOpen, onToggle }) => {
+  const contentId = useId();
+
+  return (
   <div
     className={`border border-gray-200 rounded-lg bg-white overflow-hidden transition-all duration-300 mb-3 ${
       isOpen ? "shadow-md ring-1 ring-black/5" : "hover:border-gray-300"
@@ -99,14 +102,16 @@ const InputSection = ({ title, children, isOpen, onToggle }) => (
     <button
       onClick={onToggle}
       className="flex items-center justify-between w-full p-4 text-left transition-colors bg-white hover:bg-gray-50"
+      aria-expanded={isOpen}
+      aria-controls={contentId}
     >
-      <h3
+      <h2
         className={`text-sm font-bold uppercase tracking-wider ${
-          isOpen ? "text-black" : "text-gray-600"
+          isOpen ? "text-black" : "text-gray-700"
         }`}
       >
         {title}
-      </h3>
+      </h2>
       <div
         className={`text-gray-400 transition-transform duration-300 ${
           isOpen ? "rotate-180 text-black" : ""
@@ -116,6 +121,7 @@ const InputSection = ({ title, children, isOpen, onToggle }) => (
       </div>
     </button>
     <div
+      id={contentId}
       className={`transition-all duration-300 ease-in-out ${
         isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
       }`}
@@ -125,21 +131,27 @@ const InputSection = ({ title, children, isOpen, onToggle }) => (
       </div>
     </div>
   </div>
-);
+  );
+};
 
-const InputGroup = ({ label, value, onChange, isTextArea = false }) => (
+const InputGroup = ({ label, value, onChange, isTextArea = false }) => {
+  const inputId = useId();
+
+  return (
   <div>
-    <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase tracking-wide">
+    <label htmlFor={inputId} className="block text-[10px] font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
       {label}
     </label>
     {isTextArea ? (
       <textarea
+        id={inputId}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="w-full bg-gray-50 border border-gray-200 p-2.5 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none rounded-sm resize-none h-20 block transition-all"
       />
     ) : (
       <input
+        id={inputId}
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -147,23 +159,33 @@ const InputGroup = ({ label, value, onChange, isTextArea = false }) => (
       />
     )}
   </div>
-);
+  );
+};
 
 const RatingSlider = ({ label, value, onChange }) => (
   <div className="flex items-center gap-3">
-    <span className="w-20 text-[10px] font-bold uppercase text-gray-500 truncate">
+    <span className="w-20 text-[10px] font-bold uppercase text-gray-700 truncate">
       {label}
     </span>
-    <div className="flex items-center flex-1 gap-1">
+    <div className="flex items-center flex-1 gap-1" role="radiogroup" aria-label={label}>
       {[1, 2, 3, 4, 5].map((star) => (
-        <Star
+        <button
           key={star}
-          size={16}
-          className={`cursor-pointer transition-colors ${
-            star <= value ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
-          }`}
+          type="button"
+          className="p-0.5"
           onClick={() => onChange(star)}
-        />
+          role="radio"
+          aria-checked={star === value}
+          aria-label={`${label} ${star}/5`}
+        >
+          <Star
+            size={16}
+            className={`transition-colors ${
+              star <= value ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+            }`}
+            aria-hidden="true"
+          />
+        </button>
       ))}
     </div>
     <span className="w-8 font-mono text-xs font-bold text-right text-gray-900">
@@ -208,7 +230,7 @@ export default function MovieReceiptPage() {
   const toggleLang = () => setLang((l) => (l === "zh" ? "en" : "zh"));
 
   return (
-    <div className="fixed inset-0 flex flex-col overflow-hidden font-mono text-gray-900 bg-gray-100 md:flex-row md:justify-center">
+    <div className="fixed inset-0 flex flex-col overflow-hidden text-gray-900 bg-gray-100 md:flex-row md:justify-center">
       {/* Left: Editor */}
       <div
         className={`w-full md:w-[450px] md:h-full flex flex-col h-full bg-white  z-10 transition-transform duration-300 ${
@@ -221,7 +243,8 @@ export default function MovieReceiptPage() {
           <div className="flex items-center gap-3">
             <Link
               to="/"
-              className="p-2 transition-colors rounded-full hover:bg-gray-100"
+              className="p-2 transition-colors rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+              aria-label={lang === "zh" ? "返回首页" : "Back to home"}
             >
               <ChevronLeft size={18} />
             </Link>
@@ -229,7 +252,7 @@ export default function MovieReceiptPage() {
               <h1 className="text-lg font-black tracking-wider text-gray-900 truncate">
                 {t.title}
               </h1>
-              <p className="overflow-hidden text-xs font-bold text-gray-400 whitespace-nowrap text-ellipsis">
+              <p className="overflow-hidden text-xs font-bold text-gray-600 whitespace-nowrap text-ellipsis">
                 {t.subtitle}
               </p>
             </div>
@@ -260,12 +283,13 @@ export default function MovieReceiptPage() {
             />
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 mb-1.5 uppercase">
+                <label className="block text-[10px] font-bold text-gray-700 mb-1.5 uppercase">
                   {t.labelGenre}
                 </label>
                 <select
                   value={data.genre}
                   onChange={(e) => setData({ ...data, genre: e.target.value })}
+                  aria-label={t.labelGenre}
                   className="w-full bg-gray-50 border border-gray-200 p-2.5 text-sm focus:border-black outline-none rounded-sm"
                 >
                   {Object.entries(t.genres).map(([key, label]) => (
@@ -459,7 +483,7 @@ const MoviePreview = React.forwardRef(({ data, text }, ref) => {
 
   return (
     <div ref={ref} className="w-[380px] relative">
-      <div className="min-h-[600px] bg-white p-6 pb-8 font-mono flex flex-col">
+      <div className="min-h-[600px] bg-white p-6 pb-8 font-receipt tracking-receipt flex flex-col">
         {/* Header */}
         <div className="mb-4 text-center">
           <h1
@@ -591,7 +615,7 @@ const MoviePreview = React.forwardRef(({ data, text }, ref) => {
               Favorite Scene
             </div>
             <div className="relative p-4 border-l-4 border-black bg-gray-50">
-              <p className="font-serif text-sm italic leading-loose text-justify text-gray-800 whitespace-pre-wrap">
+              <p className="text-sm italic leading-loose text-justify text-gray-800 whitespace-pre-wrap">
                 "{data.favoriteScene}"
               </p>
             </div>
@@ -628,7 +652,7 @@ const MoviePreview = React.forwardRef(({ data, text }, ref) => {
               ></div>
             ))}
           </div>
-          <div className="text-[10px] mt-1 font-mono">
+          <div className="text-[10px] mt-1 font-receipt">
             {Date.now().toString().slice(-8)}
           </div>
         </div>
